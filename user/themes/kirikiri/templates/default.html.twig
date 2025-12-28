@@ -1,0 +1,15 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <article class="post-detail">
+        <header class="article-hero card no-image">
+            <div class="article-hero-text">
+                <h1 class="article-title">{{ page.title }}</h1>
+            </div>
+        </header>
+
+        <div class="article-content content">
+            {{ page.content|raw }}
+        </div>
+    </article>
+{% endblock %}
