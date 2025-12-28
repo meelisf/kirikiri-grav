@@ -1,51 +1,163 @@
 {% extends 'partials/base.html.twig' %}
 
 {% block content %}
-    {% if uri.param('tag') %}
-        <h1 class="page-title text-center">Teema: {{ uri.param('tag') }}</h1>
-    {% endif %}
-    {% if uri.param('author') %}
-        <h1 class="page-title text-center">Autor: {{ uri.param('author') }}</h1>
-    {% endif %}
-
-    <div class="post-grid">
     {% set posts = page.collection() %}
     {% if posts|length == 0 %}
-        {% set posts = page.find('/blog').children().order('date', 'desc').slice(0, 6) %}
+        {% set posts = page.find('/blog').children().order('date', 'desc') %}
     {% endif %}
-    {% for post in posts %}
-            <article class="card">
-                {% if post.header.image %}
-                    <a href="{{ post.url }}" class="card-image-link">
-                        <img src="{{ post.media[post.header.image].url }}" alt="{{ post.title }}" class="card-image">
-                    </a>
+    
+    {# If filtering by tag or author, show simple grid (no featured) #}
+    {% if uri.param('tag') or uri.param('author') %}
+        {% if uri.param('tag') %}
+            <h1 class="page-title">Teema: {{ uri.param('tag') }}</h1>
+        {% elseif uri.param('author') %}
+            <h1 class="page-title">Autor: {{ uri.param('author') }}</h1>
+        {% endif %}
+        
+        <div class="post-grid">
+            {% for post in posts %}
+                <article class="card">
+                    {% if post.header.image %}
+                        <a href="{{ post.url }}" class="card-image-link">
+                            <img src="{{ post.media[post.header.image].url }}" alt="{{ post.title }}" class="card-image">
+                        </a>
+                    {% endif %}
+                    
+                    <div class="card-content">
+                        <div class="card-category">
+                            {% for tag in post.taxonomy.tag %}
+                                <a href="{{ base_url }}/blog/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                            {% else %}
+                                Artikkel
+                            {% endfor %}
+                        </div>
+                        <h3 class="card-title">
+                            <a href="{{ post.url }}">{{ post.title }}</a>
+                        </h3>
+                        <div class="card-excerpt">
+                            {{ post.summary|striptags }}
+                        </div>
+                        <div class="card-footer">
+                            {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
+                            <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }} {{ post.date|date("Y") }}</span>
+                            {% if post.header.author %}
+                                <span class="card-author">
+                                    <a href="{{ base_url }}/blog/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        
+        <div class="back-link">
+            <a href="{{ base_url }}">← Tagasi esilehele</a>
+        </div>
+    {% else %}
+        {# Normal homepage with featured article #}
+        
+        {# Find featured article - look for featured: true, fallback to first post #}
+        {% set featured = null %}
+        {% for post in posts %}
+            {% if post.header.featured %}
+                {% set featured = post %}
+            {% endif %}
+        {% endfor %}
+        {% if not featured %}
+            {% set featured = posts|first %}
+        {% endif %}
+    
+    {# Featured Article #}
+    {% if featured %}
+        <div class="featured-section">
+            <article class="featured-article card">
+                {% if featured.header.featured %}
+                    <span class="featured-badge">Esiletõstetud</span>
                 {% endif %}
-                
-                <div class="card-content">
+                {% if featured.header.image %}
+                    <div class="featured-image">
+                        <a href="{{ featured.url }}">
+                            <img src="{{ featured.media[featured.header.image].url }}" alt="{{ featured.title }}">
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="featured-content">
                     <div class="card-category">
-                        {% for tag in post.taxonomy.tag %}
-                            <a href="{{ base_url }}/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
-                        {% else %}
-                            Uudised
+                        {% for tag in featured.taxonomy.tag %}
+                            <a href="{{ base_url }}/blog/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </div>
-                    <h3 class="card-title">
-                        <a href="{{ post.url }}">{{ post.title }}</a>
-                    </h3>
-                    <div class="card-excerpt">
-                        {{ post.summary|striptags }}
+                    <h2 class="featured-title">
+                        <a href="{{ featured.url }}">{{ featured.title }}</a>
+                    </h2>
+                    <div class="featured-excerpt">
+                        {{ featured.summary|striptags }}
                     </div>
-                    <div class="card-footer">
+                    <div class="featured-meta">
                         {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
-                        <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }} {{ post.date|date("Y") }}</span>
-                        {% if post.header.author %}
+                        <span class="card-date">{{ featured.date|date("j.") }} {{ months[featured.date|date("n") - 1] }} {{ featured.date|date("Y") }}</span>
+                        {% if featured.header.author %}
                             <span class="card-author">
-                                <a href="{{ base_url }}/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
+                                <a href="{{ base_url }}/blog/author:{{ featured.header.author|url_encode }}">{{ featured.header.author }}</a>
                             </span>
                         {% endif %}
                     </div>
                 </div>
             </article>
-        {% endfor %}
-    </div>
+        </div>
+    {% endif %}
+
+    {# Recent Posts Grid - Exclude featured article #}
+    {% set other_posts = [] %}
+    {% for post in posts %}
+        {% if post != featured %}
+            {% set other_posts = other_posts|merge([post]) %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if other_posts|length > 0 %}
+        <h2 class="section-title">Viimased artiklid</h2>
+        <div class="post-grid">
+            {% for post in other_posts|slice(0, 5) %}
+                <article class="card">
+                    {% if post.header.image %}
+                        <a href="{{ post.url }}" class="card-image-link">
+                            <img src="{{ post.media[post.header.image].url }}" alt="{{ post.title }}" class="card-image">
+                        </a>
+                    {% endif %}
+                    
+                    <div class="card-content">
+                        <div class="card-category">
+                            {% for tag in post.taxonomy.tag %}
+                                <a href="{{ base_url }}/blog/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                            {% else %}
+                                Uudised
+                            {% endfor %}
+                        </div>
+                        <h3 class="card-title">
+                            <a href="{{ post.url }}">{{ post.title }}</a>
+                        </h3>
+                        <div class="card-excerpt">
+                            {{ post.summary|striptags }}
+                        </div>
+                        <div class="card-footer">
+                            {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
+                            <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }} {{ post.date|date("Y") }}</span>
+                            {% if post.header.author %}
+                                <span class="card-author">
+                                    <a href="{{ base_url }}/blog/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        
+        <div class="view-more">
+            <a href="{{ base_url }}/blog" class="view-more-link">Vaata kõiki artikleid →</a>
+        </div>
+    {% endif %}
+    {% endif %}
 {% endblock %}

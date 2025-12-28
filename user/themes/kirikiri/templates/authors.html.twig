@@ -1,0 +1,40 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-title">Autorid</h1>
+    
+    <div class="authors-list">
+        {% set blog_page = page.find('/blog') %}
+        {% set all_authors = {} %}
+        
+        {% if blog_page %}
+            {% for post in blog_page.children %}
+                {% if post.header.author %}
+                    {% set author = post.header.author %}
+                    {% if all_authors[author] is defined %}
+                        {% set all_authors = all_authors|merge({(author): all_authors[author] + 1}) %}
+                    {% else %}
+                        {% set all_authors = all_authors|merge({(author): 1}) %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        {% if all_authors|length > 0 %}
+            <div class="authors-grid">
+                {% for author, count in all_authors %}
+                    <div class="author-card card">
+                        <div class="author-info">
+                            <h3 class="author-name">
+                                <a href="{{ base_url }}/blog/author:{{ author|url_encode }}">{{ author }}</a>
+                            </h3>
+                            <p class="author-stats">{{ count }} artikli{{ count > 1 ? 't' : '' }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-results">Autoreid ei leitud.</p>
+        {% endif %}
+    </div>
+{% endblock %}
