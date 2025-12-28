@@ -1,0 +1,30 @@
+title: Blog Post
+'@extends':
+    type: default
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      type: tabs
+      active: 1
+
+      fields:
+        content:
+          fields:
+            header.image:
+              type: filepicker
+              folder: '@self'
+              label: Featured Image
+              preview_images: true
+              accept:
+                - .png
+                - .jpg
+                - .jpeg
+                - .webp
+              ordering: header.title
+              
+            header.media_order:
+              type: pagemedia
+              label: Page Media
+              ordering: header.image
