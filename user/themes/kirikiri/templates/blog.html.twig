@@ -2,10 +2,11 @@
 
 {% block content %}
     {% if uri.param('tag') %}
-        <h1 class="page-title text-center">Teema: {{ uri.param('tag') }}</h1>
-    {% endif %}
-    {% if uri.param('author') %}
-        <h1 class="page-title text-center">Autor: {{ uri.param('author') }}</h1>
+        <h1 class="page-title">Teema: {{ uri.param('tag') }}</h1>
+    {% elseif uri.param('author') %}
+        <h1 class="page-title">Autor: {{ uri.param('author') }}</h1>
+    {% else %}
+        <h1 class="page-title">Artiklite arhiiv</h1>
     {% endif %}
 
     <div class="post-grid">
@@ -21,7 +22,7 @@
                 <div class="card-content">
                     <div class="card-category">
                         {% for tag in post.taxonomy.tag %}
-                            <a href="{{ base_url }}/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                            <a href="{{ base_url }}/blog/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
                         {% else %}
                             Artikkel
                         {% endfor %}
@@ -37,7 +38,7 @@
                         <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }} {{ post.date|date("Y") }}</span>
                         {% if post.header.author %}
                             <span class="card-author">
-                                <a href="{{ base_url }}/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
+                                <a href="{{ base_url }}/blog/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
                             </span>
                         {% endif %}
                     </div>
@@ -45,4 +46,16 @@
             </article>
         {% endfor %}
     </div>
+
+    {% if config.plugins.pagination.enabled and posts.params.pagination %}
+        <div class="pagination">
+            {% if posts.params.pagination.has_prev %}
+                <a href="{{ posts.params.pagination.prev_url }}" class="pagination-prev">← Eelmised</a>
+            {% endif %}
+            <span class="pagination-info">Lehekülg {{ posts.params.pagination.current_page }} / {{ posts.params.pagination.total_pages }}</span>
+            {% if posts.params.pagination.has_next %}
+                <a href="{{ posts.params.pagination.next_url }}" class="pagination-next">Järgmised →</a>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}

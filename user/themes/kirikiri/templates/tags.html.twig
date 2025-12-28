@@ -1,0 +1,22 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-title">Teemad</h1>
+    
+    <div class="tags-cloud">
+        {% set defined_tags = taxonomy.taxonomy.tag %}
+        
+        {% if defined_tags %}
+            <div class="tags-list">
+                {% for tag, items in defined_tags %}
+                    <a href="{{ base_url }}/blog/tag:{{ tag }}" class="tag-item">
+                        <span class="tag-name">{{ tag }}</span>
+                        <span class="tag-count">({{ items|length }})</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-results">Märksõnu ei leitud.</p>
+        {% endif %}
+    </div>
+{% endblock %}

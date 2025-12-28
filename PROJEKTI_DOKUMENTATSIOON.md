@@ -68,10 +68,71 @@ Markdown sisu siia...
 ## 7. Paigaldamine Uude Serverisse
 Detailne juhend on failis `nuc_deployment_guide.md`.
 
-## 8. Tulevikuplaanid
-- **Esileht vs Artiklid**: Hetkel on need identsed. Tulevikus tuleks "Artiklid" leht teha eraldi arhiivi või märksõnade (Tags) põhiseks leheks, et esileht jääks vaid värskeima sisu ja esiletõstetud lugude jaoks.
-- **Arhiiv / Märksõnad**: Luua eraldi vaated sisu sirvimiseks teemade kaupa.
-- **Autorite lehekülg**: Mõttekas oleks ka autorite lehekülgede peale mõelda. 
+## 8. Tulevikuplaanid (Implementeeritud 28.12.2025)
+Kõik järgnevad funktsioonid on nüüd implementeeritud:
+
+### ✅ Esileht vs Artiklid
+Esileht (`home.html.twig`) näitab nüüd:
+- **Esiletõstetud artikkel** - Suuremas formaadis esimene/värskeim artikkel
+- **Viimased artiklid** - 5 järgmist artiklit grid-formaadis
+- **"Vaata kõiki artikleid"** nupp mis viib arhiivi
+
+### ✅ Artiklite arhiiv
+Blogi leht (`blog.html.twig`) on nüüd täielik arhiiv:
+- Pealkiri "Artiklite arhiiv"
+- Pagination tugi (lehekülgede vahel liikumine)
+- Filtreerimine teemade ja autorite kaupa
+
+### ✅ Märksõnade/Teemade vaated
+- Uus mall `tags.html.twig` - kuvab kõik märksõnad pilve formaadis
+- Leht aadressil `/tags`
+- Iga märksõna juures artiklite arv
+- Klõpsates märksõnal kuvatakse selle teema artiklid
+
+### ✅ Autorite lehekülg
+- Uus mall `authors.html.twig` - kuvab kõik autorid
+- Leht aadressil `/authors`
+- Autorite kaardid koos artiklite arvuga
+- Klõpsates autoril kuvatakse tema artiklid
+
+### ✅ Pildid postituse sees korda
+CSS-is lisatud reeglid, mis tagavad et pildid ei ületa `.article-content` laiust:
+```css
+.article-content img {
+    max-width: 100%;
+    height: auto;
+}
+```
+
+### ✅ Esilehe kujundusmuutus
+Implementeeritud uus "editorial" stiilis esileht:
+- Suur esiletõstetud artikkel ülaosas (50/50 pilt ja tekst)
+- Väiksemad kaardid alamosas
+- Selge "Vaata kõiki artikleid" nupp
+
+## 9. Uued Templiidid ja Failid
+
+### 9.1 Loodud templiidid
+- `templates/tags.html.twig` - Märksõnade pilv
+- `templates/authors.html.twig` - Autorite nimekiri
+- `templates/taxonomy.html.twig` - Üksiku märksõna/autori artiklid
+
+### 9.2 Loodud lehed
+- `user/pages/04.tags/tags.md` - Teemade leht
+- `user/pages/05.authors/authors.md` - Autorite leht
+
+### 9.3 Uuendatud templiidid
+- `templates/home.html.twig` - Uus esiletõstetud artikli layout
+- `templates/blog.html.twig` - Arhiiv koos pagination-iga
+
+### 9.4 Uuendatud CSS (`css/custom.css`)
+Lisatud stiilid:
+- `.featured-section`, `.featured-article` - Esilehe esiletõstetud artikkel
+- `.pagination` - Lehekülgede navigatsioon
+- `.tags-cloud`, `.tag-item` - Märksõnade pilv
+- `.authors-grid`, `.author-card` - Autorite kaardid
+- `.view-more`, `.view-more-link` - "Vaata kõiki" nupp
+- `.article-content img` - Piltide laiuse piiramine
 
 ---
 *Viimati uuendatud: 28. detsember 2025*
