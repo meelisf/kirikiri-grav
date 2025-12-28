@@ -1,34 +1,36 @@
 {% extends 'partials/base.html.twig' %}
 
 {% block content %}
-    <article class="post-detail">
-        <header class="article-hero card {% if not page.header.image %}no-image{% endif %}">
+    <article class="post-detail card article-card">
+        <header class="article-hero {% if not page.header.image %}no-image{% endif %}">
+            {% if page.header.image %}
+                <div class="article-hero-image">
+                    <img src="{{ page.media[page.header.image].url }}" alt="{{ page.title }}">
+                </div>
+            {% endif %}
             <div class="article-hero-text">
                 <div class="article-category">
                     {% for tag in page.taxonomy.tag %}
-                        <a href="{{ base_url }}/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                        <a href="{{ base_url }}/blog/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </div>
                 <h1 class="article-title">{{ page.title }}</h1>
                 <div class="article-meta">
                     {% if page.header.author %}
                         <div class="article-author">
-                            <a href="{{ base_url }}/author:{{ page.header.author|url_encode }}">{{ page.header.author }}</a>
+                            <a href="{{ base_url }}/blog/author:{{ page.header.author|url_encode }}">{{ page.header.author }}</a>
                         </div>
                     {% endif %}
                     {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
                     <div class="article-date">{{ page.date|date("j.") }} {{ months[page.date|date("n") - 1] }} {{ page.date|date("Y") }}</div>
                 </div>
             </div>
-            {% if page.header.image %}
-                <div class="article-hero-image">
-                    <img src="{{ page.media[page.header.image].url }}" alt="{{ page.title }}">
-                </div>
-            {% endif %}
         </header>
 
-        <div class="article-content content">
-            {{ page.content|raw }}
+        <div class="article-body">
+            <div class="article-content content">
+                {{ page.content|raw }}
+            </div>
         </div>
     </article>
 {% endblock %}
