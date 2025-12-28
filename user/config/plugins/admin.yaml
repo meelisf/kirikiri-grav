@@ -1,0 +1,5 @@
+add_modals:
+  -
+    label: Lisa artikkel
+    blueprint: admin/pages/new_post
+    show_in: bar

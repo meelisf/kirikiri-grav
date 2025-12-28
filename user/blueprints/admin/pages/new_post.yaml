@@ -1,0 +1,43 @@
+form:
+  validation: loose
+  fields:
+    section:
+      type: section
+      title: Lisa uus artikkel
+
+    title:
+      type: text
+      label: Pealkiri
+      validate:
+        required: true
+
+    folder:
+      type: hidden
+      default: '@slugify-title'
+
+    route:
+      type: hidden
+      default: /blog
+
+    name:
+      type: hidden
+      default: 'item'
+
+    visible:
+      type: hidden
+      default: ''
+
+    header.date:
+      type: hidden
+      data-default@: '\Grav\Theme\Kirikiri::getCurrentDate'
+
+    header.author:
+      type: hidden
+      default: 'Meelis Friedenthal'
+
+    taxonomy.tag:
+      type: hidden
+      default: [uudised]
+
+    blueprint:
+      type: blueprint
