@@ -68,5 +68,10 @@ Markdown sisu siia...
 ## 7. Paigaldamine Uude Serverisse
 Detailne juhend on failis `nuc_deployment_guide.md`.
 
+## 8. Tulevikuplaanid
+- **Esileht vs Artiklid**: Hetkel on need identsed. Tulevikus tuleks "Artiklid" leht teha eraldi arhiivi või märksõnade (Tags) põhiseks leheks, et esileht jääks vaid värskeima sisu ja esiletõstetud lugude jaoks.
+- **Arhiiv / Märksõnad**: Luua eraldi vaated sisu sirvimiseks teemade kaupa.
+- **Autorite lehekülg**: Mõttekas oleks ka autorite lehekülgede peale mõelda. 
+
 ---
-*Viimati uuendatud: 27. detsember 2025*
+*Viimati uuendatud: 28. detsember 2025*
