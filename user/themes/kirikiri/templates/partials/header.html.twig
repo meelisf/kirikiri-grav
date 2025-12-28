@@ -1,0 +1,21 @@
+<header class="site-header">
+  <div class="container">
+    <div class="masthead">
+      <a href="{{ base_url == '' ? '/' : base_url }}" class="masthead-logo">
+        <img src="{{ url('theme://images/kirikiri.png') }}" alt="{{ site.title }}">
+      </a>
+      <div class="site-tagline">
+        {{ site.metadata.description }}
+      </div>
+    </div>
+
+    <nav class="nav-main">
+      {% for page in pages.children.visible %}
+        {% set current_page = (page.active or page.activeChild) ? 'active' : '' %}
+        <a href="{{ page.url }}" class="nav-link {{ current_page }}">
+          {{ page.menu }}
+        </a>
+      {% endfor %}
+    </nav>
+  </div>
+</header>

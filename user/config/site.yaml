@@ -1,0 +1,19 @@
+title: Kirikiri
+author:
+  name: Meelis Friedenthal
+  email: meelis@example.com
+metadata:
+    description: 'Märkmed, artiklid ja muud kirjatükid.'
+taxonomies: [category, tag]
+pages:
+    theme: kirikiri
+    order:
+        by: default
+        dir: asc
+    process:
+        markdown: true
+        twig: true
+    dateformat:
+        default: 'd.m.Y H:i'
+        short: 'd.m.Y'
+        long: 'd. F, Y'

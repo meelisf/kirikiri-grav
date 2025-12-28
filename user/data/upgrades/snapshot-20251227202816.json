@@ -1,0 +1,29 @@
+{
+    "id": "snapshot-20251227202816",
+    "created_at": 1766867297,
+    "source_version": "1.8.0-beta.25",
+    "target_version": "1.8.0-beta.28",
+    "php_version": "8.3.29",
+    "entries": [
+        "CHANGELOG.md",
+        "CODE_OF_CONDUCT.md",
+        "CONTRIBUTING.md",
+        "LICENSE.txt",
+        "README.md",
+        "SECURITY.md",
+        "assets",
+        "bin",
+        "composer.json",
+        "composer.lock",
+        "index.php",
+        "needs_fixing.txt",
+        "now.json",
+        "system",
+        "vendor",
+        "webserver-configs"
+    ],
+    "package_path": null,
+    "backup_path": "\/var\/www\/html\/tmp\/grav-snapshots\/snapshot-20251227202816",
+    "operation": "upgrade",
+    "mode": "pre-upgrade"
+}

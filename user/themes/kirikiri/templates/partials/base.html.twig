@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="{{ grav.language.getActive ?: grav.config.site.default_lang }}">
+<head>
+{% block head %}
+    <meta charset="utf-8" />
+    <title>{% if header.title %}{{ header.title|e }} | {% endif %}{{ site.title|e }}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    {% include 'partials/metadata.html.twig' %}
+
+    <link rel="icon" type="image/png" href="{{ url('theme://images/favicon.png') }}" />
+    <link rel="canonical" href="{{ page.url(true, true) }}" />
+
+    {% block stylesheets %}
+        {% do assets.addCss('theme://css/custom.css', 100) %}
+    {% endblock %}
+    {{ assets.css() | raw }}
+{% endblock %}
+</head>
+<body class="{{ page.header.body_class }}">
+    {% block header %}
+        {% include 'partials/header.html.twig' %}
+    {% endblock %}
+
+    <main id="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% block footer %}
+        {% include 'partials/footer.html.twig' %}
+    {% endblock %}
+
+    {% block javascripts %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Auto-convert images with titles to figures
+                var images = document.querySelectorAll('.content img[title]');
+                images.forEach(function(img) {
+                    var title = img.getAttribute('title');
+                    if (title) {
+                        var figure = document.createElement('figure');
+                        var caption = document.createElement('figcaption');
+                        caption.textContent = title;
+                        
+                        // Insert figure after img
+                        img.parentNode.insertBefore(figure, img);
+                        // Move img into figure
+                        figure.appendChild(img);
+                        // Append caption
+                        figure.appendChild(caption);
+                    }
+                });
+            });
+        </script>
+    {% endblock %}
+    {{ assets.js() | raw }}
+</body>
+</html>

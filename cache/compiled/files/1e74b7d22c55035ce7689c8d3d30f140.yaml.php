@@ -1,0 +1,101 @@
+<?php
+return [
+    '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
+    'filename' => '/var/www/html/user/plugins/flex-objects/blueprints.yaml',
+    'modified' => 1764514350,
+    'size' => 1918,
+    'data' => [
+        'name' => 'Flex Objects',
+        'slug' => 'flex-objects',
+        'type' => 'plugin',
+        'testing' => true,
+        'version' => '1.4.0-beta.1',
+        'description' => 'Flex Objects plugin allows you to manage Flex Objects in Grav Admin.',
+        'icon' => 'list-alt',
+        'author' => [
+            'name' => 'Trilby Media',
+            'email' => 'hello@trilby.media'
+        ],
+        'homepage' => 'https://github.com/trilbymedia/grav-plugin-flex-objects',
+        'keywords' => 'grav, plugin, crud, directory',
+        'bugs' => 'https://github.com/trilbymedia/grav-plugin-flex-objects/issues',
+        'docs' => 'https://github.com/trilbymedia/grav-plugin-flex-objects/blob/develop/README.md',
+        'license' => 'MIT',
+        'dependencies' => [
+            0 => [
+                'name' => 'grav',
+                'version' => '>=1.8.0-beta.1'
+            ],
+            1 => [
+                'name' => 'form',
+                'version' => '>=6.0.0'
+            ]
+        ],
+        'form' => [
+            'validation' => 'loose',
+            'fields' => [
+                'enabled' => [
+                    'type' => 'toggle',
+                    'label' => 'PLUGIN_ADMIN.PLUGIN_STATUS',
+                    'highlight' => 1,
+                    'default' => 0,
+                    'options' => [
+                        1 => 'PLUGIN_ADMIN.ENABLED',
+                        0 => 'PLUGIN_ADMIN.DISABLED'
+                    ],
+                    'validate' => [
+                        'type' => 'bool'
+                    ]
+                ],
+                'built_in_css' => [
+                    'type' => 'toggle',
+                    'label' => 'PLUGIN_FLEX_OBJECTS.USE_BUILT_IN_CSS',
+                    'highlight' => 1,
+                    'default' => 1,
+                    'options' => [
+                        1 => 'PLUGIN_ADMIN.ENABLED',
+                        0 => 'PLUGIN_ADMIN.DISABLED'
+                    ],
+                    'validate' => [
+                        'type' => 'bool'
+                    ]
+                ],
+                'extra_admin_twig_path' => [
+                    'type' => 'text',
+                    'label' => 'PLUGIN_FLEX_OBJECTS.EXTRA_ADMIN_TWIG_PATH',
+                    'validate' => [
+                        'required' => true
+                    ]
+                ],
+                'security_section' => [
+                    'type' => 'section',
+                    'title' => 'Security',
+                    'underline' => true
+                ],
+                'security.restrict_page_frontmatter' => [
+                    'type' => 'toggle',
+                    'label' => 'Restrict Page Frontmatter Editing',
+                    'help' => 'When enabled, non-superusers cannot modify form, forms, process, or twig settings in page headers. Disable if editors need to modify forms.',
+                    'highlight' => 1,
+                    'default' => 1,
+                    'options' => [
+                        1 => 'PLUGIN_ADMIN.ENABLED',
+                        0 => 'PLUGIN_ADMIN.DISABLED'
+                    ],
+                    'validate' => [
+                        'type' => 'bool'
+                    ]
+                ],
+                'directories' => [
+                    'type' => 'flex-objects',
+                    'label' => 'PLUGIN_FLEX_OBJECTS.DIRECTORIES',
+                    'array' => true,
+                    'ignore_empty' => true,
+                    'validate' => [
+                        'type' => 'array'
+                    ]
+                ]
+            ]
+        ]
+    ]
+];
