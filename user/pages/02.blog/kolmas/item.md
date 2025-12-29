@@ -2,9 +2,9 @@
 title: "Kolmas, aga see on väga pika pealkirjaga, sisaldades sõnu nagu eshatoloogia, mis on juba iseenesest väga pikk sõna"
 date: "2025-12-28"
 image: "r_acad_dorp_1632_1_Page_02.jpg"
-author: "Meelis Friedenthal"
 taxonomy:
     tag: [Kultuur, Notes]
+    author: ["Meelis Friedenthal"]
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel massa mi. Praesent at tincidunt diam. Nunc tristique scelerisque mi. Donec facilisis gravida nulla ut pulvinar. Donec vel viverra velit, a euismod tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed eget ultrices leo. Morbi dignissim est massa, id consectetur dui porta feugiat. Morbi eget tellus eu elit ullamcorper euismod ut id mi.

@@ -4,7 +4,7 @@ author:
   email: meelis@example.com
 metadata:
     description: 'Märkmed, artiklid ja muud kirjatükid.'
-taxonomies: [category, tag]
+taxonomies: [category, tag, author]
 pages:
     theme: kirikiri
     order:

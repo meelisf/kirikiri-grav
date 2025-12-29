@@ -17,9 +17,10 @@
                 </div>
                 <h1 class="article-title">{{ page.title }}</h1>
                 <div class="article-meta">
-                    {% if page.header.author %}
+                    {% set author = page.taxonomy.author ? page.taxonomy.author|first : page.header.author %}
+                    {% if author %}
                         <div class="article-author">
-                            <a href="{{ base_url }}/blog/author:{{ page.header.author|url_encode }}">{{ page.header.author }}</a>
+                            <a href="{{ base_url }}/blog/author:{{ author|url_encode }}">{{ author }}</a>
                         </div>
                     {% endif %}
                     {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}

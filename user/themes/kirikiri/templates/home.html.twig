@@ -40,9 +40,16 @@
                         <div class="card-footer">
                             {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
                             <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }} {{ post.date|date("Y") }}</span>
-                            {% if post.header.author %}
+                            {% if post.taxonomy.author is iterable %}
+                                {% set author = post.taxonomy.author|first %}
+                            {% elseif post.header.taxonomy.author %}
+                                {% set author = post.header.taxonomy.author|first %}
+                            {% else %}
+                                {% set author = post.header.author %}
+                            {% endif %}
+                            {% if author %}
                                 <span class="card-author">
-                                    <a href="{{ base_url }}/blog/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
+                                    <a href="{{ base_url }}/blog/author:{{ author|url_encode }}">{{ author }}</a>
                                 </span>
                             {% endif %}
                         </div>
@@ -97,9 +104,16 @@
                     <div class="featured-meta">
                         {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
                         <span class="card-date">{{ featured.date|date("j.") }} {{ months[featured.date|date("n") - 1] }} {{ featured.date|date("Y") }}</span>
-                        {% if featured.header.author %}
+                        {% if featured.taxonomy.author is iterable %}
+                            {% set author = featured.taxonomy.author|first %}
+                        {% elseif featured.header.taxonomy.author %}
+                            {% set author = featured.header.taxonomy.author|first %}
+                        {% else %}
+                            {% set author = featured.header.author %}
+                        {% endif %}
+                        {% if author %}
                             <span class="card-author">
-                                <a href="{{ base_url }}/blog/author:{{ featured.header.author|url_encode }}">{{ featured.header.author }}</a>
+                                <a href="{{ base_url }}/blog/author:{{ author|url_encode }}">{{ author }}</a>
                             </span>
                         {% endif %}
                     </div>
@@ -145,9 +159,16 @@
                         <div class="card-footer">
                             {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
                             <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }} {{ post.date|date("Y") }}</span>
-                            {% if post.header.author %}
+                            {% if post.taxonomy.author is iterable %}
+                                {% set author = post.taxonomy.author|first %}
+                            {% elseif post.header.taxonomy.author %}
+                                {% set author = post.header.taxonomy.author|first %}
+                            {% else %}
+                                {% set author = post.header.author %}
+                            {% endif %}
+                            {% if author %}
                                 <span class="card-author">
-                                    <a href="{{ base_url }}/blog/author:{{ post.header.author|url_encode }}">{{ post.header.author }}</a>
+                                    <a href="{{ base_url }}/blog/author:{{ author|url_encode }}">{{ author }}</a>
                                 </span>
                             {% endif %}
                         </div>
