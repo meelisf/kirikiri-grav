@@ -34,8 +34,12 @@
                         <h3 class="card-title">
                             <a href="{{ post.url }}">{{ post.title }}</a>
                         </h3>
-                        <div class="card-excerpt">
-                            {{ post.summary|striptags }}
+                        <div class="card-excerpt {{ post.title|length < 50 ? 'excerpt-long' : '' }}">
+                            {% if post.title|length < 50 %}
+                                {{ post.content|striptags|truncate(280, true, ' ...')|raw }}
+                            {% else %}
+                                {{ post.summary|striptags }}
+                            {% endif %}
                         </div>
                         <div class="card-footer">
                             {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
@@ -153,8 +157,12 @@
                         <h3 class="card-title">
                             <a href="{{ post.url }}">{{ post.title }}</a>
                         </h3>
-                        <div class="card-excerpt">
-                            {{ post.summary|striptags }}
+                        <div class="card-excerpt {{ post.title|length < 50 ? 'excerpt-long' : '' }}">
+                            {% if post.title|length < 50 %}
+                                {{ post.content|striptags|truncate(280, true, ' ...')|raw }}
+                            {% else %}
+                                {{ post.summary|striptags }}
+                            {% endif %}
                         </div>
                         <div class="card-footer">
                             {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
