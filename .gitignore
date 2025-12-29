@@ -1,5 +1,17 @@
-cache/
-logs/
-tmp/
+# Grav Core
+cache/*
+logs/*
+images/*
+assets/*
+backup/*
+tmp/*
+.ds_store
+.thumbs
+
+# User Generated
+user/data/*
+!user/data/.gitkeep
+
+# OS
 .DS_Store
-*.log
+Thumbs.db

@@ -1,10 +1,13 @@
 ---
-title: "Teine"
-date: "2025-12-22"
-image: "teine.jpg"
-author: "Meelis Friedenthal"
+title: Teine
+date: '2025-12-22'
+image: teine.jpg
 taxonomy:
-    tag: [Kultuur, Notes]
+    author:
+        - 'Keegi Teine'
+    tag:
+        - Kassid
+        - Kollane
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel massa mi. Praesent at tincidunt diam. Nunc tristique scelerisque mi. Donec facilisis gravida nulla ut pulvinar. Donec vel viverra velit, a euismod tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed eget ultrices leo. Morbi dignissim est massa, id consectetur dui porta feugiat. Morbi eget tellus eu elit ullamcorper euismod ut id mi.

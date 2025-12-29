@@ -2,9 +2,9 @@
 title: "Tehislik tarumõistus"
 date: "2025-12-11"
 image: "tarumõistus.jpg"
-author: "Meelis Friedenthal"
 taxonomy:
     tag: [TI, Kultuur, Mesilased]
+    author: ["Meelis Friedenthal"]
 ---
 
 See ei ole ainult nii, vaid ka naa. Sul on absloluutselt õigus. Aeg on jõgi. 
