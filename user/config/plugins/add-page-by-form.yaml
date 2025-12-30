@@ -1,0 +1,9 @@
+enabled: false
+date_display_format: 'd-m-Y H:i'
+default_title: 'My New Page'
+default_content: 'No content.'
+overwrite_mode: '0'
+include_username: true
+auto_taxonomy_types: false
+use_editor_class: true
+physical_template_name: true

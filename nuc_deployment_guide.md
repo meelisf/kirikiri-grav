@@ -1,97 +1,85 @@
 # Kirikiri Grav CMS - Paigaldusjuhend NUC serverile
 
-See juhend on mõeldud selleks, et saaksid oma Kirikiri veebi kiiresti ja probleemideta NUC serveris tööle panna, vältides uuesti samu seadistusvigu.
+See juhend aitab sul Kirikiri veebilehe NUC serveris tööle panna, kasutades **Dockerit**. See on kõige stabiilsem ja turvalisem viis, eriti kuna sinu serveris jookseb juba teisi teenuseid (Nginx, Jekyll).
 
-## 1. Nõuded süsteemile
+## 1. Ettevalmistus serveris
 
-Grav CMS vajab kaasaegset PHP versiooni. Enne alustamist veendu, et serveris on:
-- **PHP 8.3 või uuem** (kriitiline Admin plugina jaoks).
-- **Apache** (mod_rewrite lubatud) või **Nginx**.
-- Vajalikud PHP laiendused: `gd`, `zip`, `intl`, `opcache`, `mbstring`.
+Eeldame, et sul on serveris juba **Docker** ja **Git** olemas.
 
-## 2. Paigaldamine (Git või FTP kaudu)
+1.  Logi serverisse sisse.
+2.  Liigu kausta, kuhu soovid veebi paigaldada (nt `/home/kasutaja/veebid`).
+3.  Klooni repo (või kopeeri failid):
+    ```bash
+    git clone <repo_url> kirikiri
+    cd kirikiri
+    ```
 
-Kui kopeerid failid olemasolevast arenduskeskkonnast:
-1. Kopeeri kogu `kirikiri-grav` kausta sisu serverisse.
-2. **Kriitiline:** Veendu, et ka `.htaccess` fail kopeeriti veebi juurkataloogi. Ilma selleta töötavad ainult staatilised failid, aga Gravi sisemine ruutimine (lehed) mitte.
+## 2. Käivitamine Dockeriga (Soovituslik)
 
+Olen lisanud projekti `Dockerfile` ja `docker-compose.yml`, mis teevad käivitamise väga lihtsaks.
 
-Grav peab saama teatud kaustadesse kirjutada. Jookse järgmised käsud oma serveri terminalis (eeldades, et veebiserveri kasutaja on `www-data`):
-
-```bash
-cd /path/to/kirikiri-grav
-sudo chown -R www-data:www-data .
-sudo chmod -R 775 cache logs images user/pages user/config user/data tmp assets backup
-```
-
-## 4. Grav-i ja pluginate värskendamine
-
-Kui soovid alustada puhtalt lehelt, tee järgmist:
-
-```bash
-# Liigu kausta
-cd /path/to/kirikiri-grav
-
-# Värskenda Gravi ennast
-bin/gpm selfupgrade -y
-
-# Paigalda Admin plugin (see küsib luba paigaldada ka login, forms ja email)
-bin/gpm install admin -y
-```
-
-## 5. Veebiserveri seadistus (Apache)
-
-Veendu, et Apache konfiguratsioonis on lubatud `.htaccess` failide kasutamine (`AllowOverride All`).
-
-```apache
-<Directory /var/www/html>
-    Options Indexes FollowSymLinks
-    AllowOverride All
-    Require all granted
-</Directory>
-```
-
-Pärast muutmist taaskäivita Apache: `sudo systemctl restart apache2`
-
-## 6. Dockeriga paigaldamine (Soovituslik kiireim viis)
-
-Kui su NUC-is on Docker, saad kogu keskkonna püsti panna ühe käsuga:
-
-```bash
-docker run -d \
-  --name kirikiri-veeb \
-  -p 80:80 \
-  -v $(pwd):/var/www/html \
-  php:8.3-apache
-```
-
-Pärast konteineri käivitamist sisene sellesse ja paigalda vajalikud moodulid:
-
-```bash
-docker exec -it kirikiri-veeb bash
-apt-get update && apt-get install -y libpng-dev libjpeg-dev libzip-dev libicu-dev
-docker-php-ext-install gd zip opcache intl
-a2enmod rewrite
-service apache2 restart
-```
-
-## 7. Teema kontroll
-
-Veendu, et teema on aktiivne failis `user/config/system.yaml`:
+### Samm 1: Konfigureeri port
+Vaikimisi paneb `docker-compose.yml` Gravi tööle pordil **8080**.
+Kui see port on hõivatud, ava `docker-compose.yml` ja muuda rida:
 ```yaml
-pages:
-  theme: kirikiri
+ports:
+  - "8080:80"  <-- Muuda esimest numbrit (nt "8081:80")
 ```
 
-Ja et vajalikud templiidid on olemas:
-- `user/themes/kirikiri/templates/home.html.twig`
-- `user/themes/kirikiri/templates/blog.html.twig`
-- `user/themes/kirikiri/templates/item.html.twig`
-- `user/themes/kirikiri/templates/default.html.twig`
+### Samm 2: Käivita
+Projektis olles kirjuta:
+```bash
+docker compose up -d --build
+```
+See ehitab PHP 8.3 + Apache konteineri ja paneb selle taustal käima.
 
-## 8. Probleemide lahendamine
+### Samm 3: Õiguste kontroll
+Kuna Grav kirjutab failisüsteemi (cache, logs, images), peab veebiserveril (kasutaja `www-data`, ID 33) olema õigus kirjutada.
+Kõige lihtsam on anda kausta omanikuõigus konteineri kasutajale:
 
-- **Valge leht:** Kontrolli `logs/grav.log` faili. Tavaliselt on see märk puuduvast PHP laiendusest või õiguste probleemist.
-- **404 Port:** Veendu, et `.htaccess` on olemas ja Apache `mod_rewrite` on sisse lülitatud.
-- **Admin panel ei tööta:** Kontrolli, et PHP versioon on vähemalt 8.3 ja pluginad `login`, `forms` ning `email` on paigaldatud.
+```bash
+docker exec -u root kirikiri-production chown -R www-data:www-data /var/www/html
+```
+
+Nüüd peaks sait olema kättesaadav aadressil `http://<serveri-ip>:8080`.
+
+## 3. Nginx Reverse Proxy (kui soovid ilusat domeeni)
+
+Kuna sul on Nginx juba serveris (“ees”), siis seadista see suunama liiklust Gravi Docker konteinerile.
+
+Loo Nginx konfiguratsioon (nt `/etc/nginx/sites-available/kirikiri.conf`):
+
+```nginx
+server {
+    listen 80;
+    server_name kirikiri.ee www.kirikiri.ee; # Sinu domeen
+
+    location / {
+        proxy_pass http://localhost:8080; # Seesama port, mis docker-compose.yml failis
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+Aktiveeri sait ja lae Nginx uuesti:
+```bash
+sudo ln -s /etc/nginx/sites-available/kirikiri.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+## 4. Hooldus ja uuendamine
+
+- **Koodi uuendamine**:
+  ```bash
+  git pull
+  docker compose restart
+  ```
+- **Cache tühjendamine** (kui teed muudatusi):
+  ```bash
+  docker exec -i -u www-data kirikiri-production bin/grav clearcache
+  ```
+
 

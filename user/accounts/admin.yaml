@@ -1,6 +1,6 @@
 state: enabled
-email: admin@example.com
-fullname: 'Admin User'
+email: meelis.friedenthal@gmail.com
+fullname: 'Meelis Friedenthal'
 title: Administrator
 access:
   admin:
@@ -8,4 +8,4 @@ access:
     super: true
   site:
     login: true
-hashed_password: $2y$10$lXy1v242y0kTVbh/igJUg.SSBuFLtvdRmP9pMhjerseU5K14E3Hbi
+hashed_password: $2y$10$12B5YWQifdEYryw.ZyfBPuhsZQsZ7j8o3dOcFzk/7y1i222Dgdviu

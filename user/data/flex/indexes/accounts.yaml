@@ -1,9 +1,14 @@
 version: '1.2'
-timestamp: 1766867426
-count: 1
+timestamp: 1766960522
+count: 2
 index:
   admin:
     storage_key: admin
-    storage_timestamp: 1766867425
+    storage_timestamp: 1766960522
     key: admin
-    email: admin@example.com
+    email: meelis.friedenthal@gmail.com
+  admin.yaml.bak:
+    storage_key: admin.yaml.bak
+    storage_timestamp: 0
+    key: admin.yaml.bak
+    email: null

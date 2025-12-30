@@ -1,11 +1,14 @@
 ---
-title: "Neljas ja normaalne pealkiri"
-date: "2025-12-28"
-image: "Paljassaare_sadam_1987.jpg"
-author: "Meelis Friedenthal"
+title: 'Neljas ja normaalne pealkiri'
+date: '2025-12-28'
+image: Paljassaare_sadam_1987.jpg
 featured: true
 taxonomy:
-    tag: [Kultuur, Sadamad]
+    author:
+        - 'Meelis Friedenthal'
+    tag:
+        - Kultuur
+        - Sadamad
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel massa mi. Praesent at tincidunt diam. Nunc tristique scelerisque mi. Donec facilisis gravida nulla ut pulvinar. Donec vel viverra velit, a euismod tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed eget ultrices leo. Morbi dignissim est massa, id consectetur dui porta feugiat. Morbi eget tellus eu elit ullamcorper euismod ut id mi.
