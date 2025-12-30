@@ -767,6 +767,61 @@ sup a {
     font-weight: 700;
 }
 
+/* --- Archive View (2-column, horizontal cards) --- */
+.archive-year {
+    width: 100%;
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin: 2rem 0 1rem 0;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+    color: var(--text-main);
+    clear: both;
+}
+
+.archive-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Archive cards use standard .card styling, just smaller titles */
+.archive-card .card-title {
+    font-size: 1.1rem;
+}
+
+.archive-card .card-image-link {
+    aspect-ratio: 4 / 3;
+}
+
+/* Placeholder for posts without images */
+.card-placeholder {
+    background: linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    color: #aaa;
+    opacity: 0.6;
+}
+
+@media (max-width: 900px) {
+    .archive-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .archive-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ============================================
    PRINT STYLES - Printer-Friendly Articles
    ============================================ */
@@ -791,13 +846,7 @@ sup a {
         display: none !important;
     }
 
-    /* Keep masthead but simplify it */
-    .site-header {
-        padding: 0.5rem 0 0.5rem;
-        border-bottom: 1px solid #000;
-        margin-bottom: 1rem;
-        page-break-after: avoid;
-    }
+
 
     .masthead {
         margin-bottom: 0;

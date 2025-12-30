@@ -1,0 +1,127 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    {# Tagi või autori filtri pealkiri #}
+    {% if uri.param('tag') %}
+        <h1 class="page-title">Teema: {{ uri.param('tag') }}</h1>
+    {% elseif uri.param('author') %}
+        <h1 class="page-title">Autor: {{ uri.param('author') }}</h1>
+    {% else %}
+        <h1 class="page-title">{{ page.title }}</h1>
+        {{ page.content|raw }}
+    {% endif %}
+
+    {# 1. Määra postituste kollektsioon #}
+    {% set posts = page.collection() %}
+    
+    {# Fallback: kui praegusel lehel pole kollektsiooni, proovi leida '/blog' lehe oma #}
+    {% if posts|length == 0 %}
+         {% set blog = page.find('/blog') %}
+         {% if blog %}
+            {% set posts = blog.collection() %}
+         {% endif %}
+    {% endif %}
+
+    {# Järjesta postitused kuupäeva järgi #}
+    {% if posts %}
+        {% set posts = posts.order('date', 'desc') %}
+    {% endif %}
+
+    {# 2. Tsükkel üle postituste #}
+    {% set current_year = null %}
+    
+    {% if posts|length > 0 %}
+        {% for post in posts %}
+            {% set post_year = post.date|date("Y") %}
+            
+            {# Aasta rühmitamise loogika #}
+            {% if post_year != current_year %}
+                {% if current_year is not null %}
+                    </div> {# Sulge eelmine grid #}
+                {% endif %}
+                
+                <div class="archive-year">{{ post_year }}</div>
+                <div class="archive-grid">
+                {% set current_year = post_year %}
+            {% endif %}
+            
+            <article class="archive-card card">
+                {# --- PILDI PARANDUS (Turvaline) --- #}
+                {% set intro_image = null %}
+                {% if post.header.image and post.media[post.header.image] %}
+                    {% set intro_image = post.media[post.header.image] %}
+                {% endif %}
+                
+                {% if intro_image %}
+                    <a href="{{ post.url }}" class="card-image-link">
+                        <img src="{{ intro_image.url }}" alt="{{ post.title }}" class="card-image">
+                    </a>
+                {% else %}
+                    <a href="{{ post.url }}" class="card-image-link card-placeholder">
+                        <span class="placeholder-icon">❦</span>
+                    </a>
+                {% endif %}
+                {# --------------------- #}
+                
+                <div class="card-content">
+                    <div class="card-category">
+                        {% for tag in post.taxonomy.tag %}
+                            <a href="{{ base_url }}/blog/tag:{{ tag }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            Artikkel
+                        {% endfor %}
+                    </div>
+                    
+                    <h3 class="card-title">
+                        <a href="{{ post.url }}">{{ post.title }}</a>
+                    </h3>
+
+                    <div class="card-footer">
+                        {% set months = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"] %}
+                        <span class="card-date">{{ post.date|date("j.") }} {{ months[post.date|date("n") - 1] }}</span>
+                        
+                        {# --- AUTORI LEIDMINE (Parandatud: Klassikaline If/Else) --- #}
+                        {% set author = null %}
+                        {% if post.taxonomy.author is iterable and post.taxonomy.author|length > 0 %}
+                            {% set author = post.taxonomy.author|first %}
+                        {% elseif post.header.taxonomy.author is iterable and post.header.taxonomy.author|length > 0 %}
+                            {% set author = post.header.taxonomy.author|first %}
+                        {% elseif post.header.author %}
+                            {% set author = post.header.author %}
+                        {% endif %}
+                        {# --------------------- #}
+                        
+                        {% if author %}
+                            <span class="sep"></span>
+                            <span class="card-author">
+                                <a href="{{ base_url }}/blog/author:{{ author|url_encode }}">{{ author }}</a>
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <a href="{{ post.url }}" class="read-more-link">Loe edasi →</a>
+                </div>
+            </article>
+        {% endfor %}
+        
+        {# Sulge viimane grid #}
+        </div>
+        
+    {% else %}
+        <p>Postitusi ei leitud.</p>
+    {% endif %}
+
+    {# 3. Pagineerimine #}
+    {% if config.plugins.pagination.enabled and posts.params.pagination %}
+        <div class="pagination">
+            {% if posts.params.pagination.has_prev %}
+                <a href="{{ posts.params.pagination.prev_url }}" class="pagination-prev">← Eelmised</a>
+            {% endif %}
+            <span class="pagination-info">Lehekülg {{ posts.params.pagination.current_page }} / {{ posts.params.pagination.total_pages }}</span>
+            {% if posts.params.pagination.has_next %}
+                <a href="{{ posts.params.pagination.next_url }}" class="pagination-next">Järgmised →</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% endblock %}
