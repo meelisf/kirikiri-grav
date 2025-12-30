@@ -93,6 +93,12 @@
                             <img src="{{ featured.media[featured.header.image].url }}" alt="{{ featured.title }}">
                         </a>
                     </div>
+                {% else %}
+                    <div class="featured-image featured-placeholder">
+                        <a href="{{ featured.url }}">
+                            <span class="placeholder-icon">❦</span>
+                        </a>
+                    </div>
                 {% endif %}
                 <div class="featured-content">
                     <div class="card-category">
@@ -144,6 +150,10 @@
                     {% if post.header.image %}
                         <a href="{{ post.url }}" class="card-image-link">
                             <img src="{{ post.media[post.header.image].url }}" alt="{{ post.title }}" class="card-image">
+                        </a>
+                    {% else %}
+                        <a href="{{ post.url }}" class="card-image-link card-placeholder">
+                            <span class="placeholder-icon">❦</span>
                         </a>
                     {% endif %}
                     
