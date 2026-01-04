@@ -838,6 +838,42 @@ sup a {
     }
 }
 
+/* --- Tables --- */
+.article-content table {
+    width: 100%;
+    margin-bottom: 2rem;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.article-content th,
+.article-content td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.article-content th {
+    font-weight: 700;
+    border-bottom: 2px solid var(--border-dark);
+    background-color: transparent;
+    vertical-align: bottom;
+}
+
+.article-content tr:hover td {
+    background-color: #fafafa;
+}
+
+/* Responsive table wrapper workaround */
+@media (max-width: 768px) {
+    .article-content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
 /* ============================================
    PRINT STYLES - Printer-Friendly Articles
    ============================================ */
