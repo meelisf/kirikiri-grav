@@ -838,6 +838,27 @@ sup a {
     }
 }
 
+/* --- Content Typography & Elements --- */
+.article-content ul,
+.article-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.3rem;
+}
+
+/* Nested lists */
+.article-content ul ul,
+.article-content ol ol,
+.article-content ul ol,
+.article-content ol ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 /* --- Tables --- */
 .article-content table {
     width: 100%;
