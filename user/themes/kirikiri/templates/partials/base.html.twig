@@ -34,7 +34,7 @@
     {% endblock %}
 
     {% block javascripts %}
-        <script src="{{ url('theme://js/lightbox.js') }}"></script>
+        <script src="{{ url('theme://js/lightbox.js') }}?v={{ 'now'|date('YmdHis') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Auto-convert images with titles to figures
