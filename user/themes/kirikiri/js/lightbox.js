@@ -1,26 +1,55 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Lightbox script loaded');
+    console.log('Lightbox script loaded (Inline Styles Version)');
 
     // Select all images within the article content
     const contentImages = document.querySelectorAll('.article-content img');
     console.log('Found images for lightbox:', contentImages.length);
 
-    // Create the lightbox overlay element
+    // Create the lightbox overlay element with INLINE STYLES to bypass CSS issues
     const lightboxOverlay = document.createElement('div');
     lightboxOverlay.id = 'lightbox-overlay';
-    lightboxOverlay.className = 'lightbox-overlay';
+
+    // Critical styles applied directly via JS
+    lightboxOverlay.style.position = 'fixed';
+    lightboxOverlay.style.top = '0';
+    lightboxOverlay.style.left = '0';
+    lightboxOverlay.style.width = '100vw';
+    lightboxOverlay.style.height = '100vh';
+    lightboxOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+    lightboxOverlay.style.zIndex = '2147483647'; // Max safe integer
+    lightboxOverlay.style.display = 'none';
+    lightboxOverlay.style.justifyContent = 'center';
+    lightboxOverlay.style.alignItems = 'center';
+    lightboxOverlay.style.cursor = 'pointer';
 
     // Create the image container
     const lightboxImageContainer = document.createElement('div');
-    lightboxImageContainer.className = 'lightbox-image-container';
+    lightboxImageContainer.style.maxWidth = '90%';
+    lightboxImageContainer.style.maxHeight = '90vh';
+    lightboxImageContainer.style.position = 'relative';
+    lightboxImageContainer.style.display = 'flex';
+    lightboxImageContainer.style.justifyContent = 'center';
+    lightboxImageContainer.style.alignItems = 'center';
 
     // Create the image element
     const lightboxImage = document.createElement('img');
+    lightboxImage.style.maxWidth = '100%';
+    lightboxImage.style.maxHeight = '90vh';
+    lightboxImage.style.objectFit = 'contain';
+    lightboxImage.style.border = '2px solid #333';
+    lightboxImage.style.backgroundColor = '#000';
 
     // Create close button
     const closeButton = document.createElement('span');
-    closeButton.className = 'lightbox-close';
     closeButton.innerHTML = '&times;';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '20px';
+    closeButton.style.right = '30px';
+    closeButton.style.color = '#fff';
+    closeButton.style.fontSize = '40px';
+    closeButton.style.fontWeight = 'bold';
+    closeButton.style.cursor = 'pointer';
+    closeButton.style.zIndex = '2147483647';
 
     // Assemble the lightbox
     lightboxImageContainer.appendChild(lightboxImage);
@@ -33,30 +62,32 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Opening lightbox for:', imgSrc);
         lightboxImage.src = imgSrc;
         lightboxImage.alt = imgAlt || '';
-        lightboxOverlay.classList.add('active');
+
+        // Use flex directly
+        lightboxOverlay.style.display = 'flex';
+
         document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
     // Function to close lightbox
     function closeLightbox() {
         console.log('Closing lightbox');
-        lightboxOverlay.classList.remove('active');
+        lightboxOverlay.style.display = 'none';
         document.body.style.overflow = ''; // Restore scrolling
         setTimeout(() => {
-            lightboxImage.src = ''; // Clear source after transition
-        }, 300);
+            lightboxImage.src = '';
+        }, 100);
     }
 
     // Add click event to images
     contentImages.forEach(img => {
-        // Only apply to images that are likely content (skip small icons if any)
         if (img.naturalWidth > 100 || img.width > 100) {
             img.style.cursor = 'zoom-in';
-            img.classList.add('lightbox-trigger');
+            img.style.transition = 'opacity 0.2s';
 
             img.addEventListener('click', function (e) {
-                e.preventDefault(); // Prevent default link behavior if wrapped in link
-                e.stopPropagation(); // Stop event bubbling
+                e.preventDefault();
+                e.stopPropagation();
                 openLightbox(this.src, this.alt);
             });
         }
@@ -64,14 +95,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close on overlay click
     lightboxOverlay.addEventListener('click', function (e) {
-        if (e.target === lightboxOverlay || e.target === closeButton) {
+        if (e.target === lightboxOverlay || e.target === closeButton || e.target === lightboxImageContainer) {
             closeLightbox();
         }
     });
 
     // Close on Escape key
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && lightboxOverlay.classList.contains('active')) {
+        if (e.key === 'Escape' && lightboxOverlay.style.display === 'flex') {
             closeLightbox();
         }
     });
