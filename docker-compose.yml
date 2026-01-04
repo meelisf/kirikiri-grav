@@ -1,0 +1,14 @@
+services:
+  kirikiri:
+    build: .
+    container_name: kirikiri-production
+    restart: unless-stopped
+    ports:
+      # Maps host port 8080 to container port 80
+      # You can change 8080 to whatever available port you have
+      - "8080:80"
+    volumes:
+      # Mount the current directory into the container
+      - .:/var/www/html
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
