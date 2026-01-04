@@ -1,0 +1,28 @@
+{% for meta in page.metadata %}
+    <meta {% if meta.name %}name="{{ meta.name|e }}" {% endif %}{% if meta.http_equiv %}http-equiv="{{ meta.http_equiv|e }}" {% endif %}{% if meta.charset %}charset="{{ meta.charset|e }}" {% endif %}{% if meta.property %}property="{{ meta.property|e }}" {% endif %}{% if meta.content %}content="{{ meta.content|raw }}" {% endif %}/>
+{% endfor %}
+
+{# Open Graph (Facebook, LinkedIn) #}
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{% if header.title %}{{ header.title|e }} | {% endif %}{{ site.title|e }}" />
+<meta property="og:description" content="{% if header.metadata.description %}{{ header.metadata.description|e }}{% else %}{{ site.metadata.description|e }}{% endif %}" />
+<meta property="og:url" content="{{ page.url(true, true) }}" />
+<meta property="og:site_name" content="{{ site.title|e }}" />
+
+{% if header.image %}
+    {% set og_image = page.media[header.image] %}
+{% else %}
+    {% set og_image = uri.rootUrl(true) ~ '/user/themes/kirikiri/images/kirikiri.png' %}
+{% endif %}
+
+{% if og_image %}
+    <meta property="og:image" content="{{ og_image.url(true) }}" />
+{% endif %}
+
+{# Twitter Card #}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{% if header.title %}{{ header.title|e }} | {% endif %}{{ site.title|e }}" />
+<meta name="twitter:description" content="{% if header.metadata.description %}{{ header.metadata.description|e }}{% else %}{{ site.metadata.description|e }}{% endif %}" />
+{% if og_image %}
+    <meta name="twitter:image" content="{{ og_image.url(true) }}" />
+{% endif %}
