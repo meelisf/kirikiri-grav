@@ -1,7 +1,5 @@
-// DEBUG: Alert to test if script loads
-alert('Lightbox JS laetud!');
-
-// Wait for all images to load before attaching lightbox handlers
+// Lightbox for article images - click to enlarge
+// Wait for all images to load before attaching handlers
 window.addEventListener('load', function () {
     console.log('Lightbox script loaded (window.onload version)');
 
