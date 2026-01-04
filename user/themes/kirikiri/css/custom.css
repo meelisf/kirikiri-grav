@@ -315,6 +315,8 @@ body {
     .article-hero-text {
         text-align: center;
         padding: 1rem 0 0 0;
+        min-height: auto;
+        /* Reset min-height to remove gap */
     }
 
     .article-hero-image {
