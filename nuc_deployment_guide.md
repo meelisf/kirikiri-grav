@@ -1,85 +1,53 @@
-# Kirikiri Grav CMS - Paigaldusjuhend NUC serverile
+# Kirikiri Grav CMS - Serveri dokumentatsioon ja haldus
 
-See juhend aitab sul Kirikiri veebilehe NUC serveris tööle panna, kasutades **Dockerit**. See on kõige stabiilsem ja turvalisem viis, eriti kuna sinu serveris jookseb juba teisi teenuseid (Nginx, Jekyll).
+See dokument kirjeldab Kirikiri veebilehe seadistust serveris ja haldustoiminguid.
 
-## 1. Ettevalmistus serveris
+## Serveri keskkond
+- **Grav Versioon**: v1.8.0-beta.29
+- **Admin Versioon**: v1.11.0-beta.3
+- **Konteineri nimi**: `kirikiri-production`
+- **Port**: 8080 (kaardistatud konteineri porti 80)
+- **Asukoht**: `/home/meelis/koduserver/kirikiri-grav` (või sarnane)
 
-Eeldame, et sul on serveris juba **Docker** ja **Git** olemas.
+## Docker Compose Seadistus
+Veebileht jookseb osana suuremast Docker Compose pinu (stack) lahendusest, mis asub ülemkaustas. Siin kaustas olevad failid (`Dockerfile`) on kasutusel pildi ehitamiseks.
 
-1.  Logi serverisse sisse.
-2.  Liigu kausta, kuhu soovid veebi paigaldada (nt `/home/kasutaja/veebid`).
-3.  Klooni repo (või kopeeri failid):
-    ```bash
-    git clone <repo_url> kirikiri
-    cd kirikiri
-    ```
-
-## 2. Käivitamine Dockeriga (Soovituslik)
-
-Olen lisanud projekti `Dockerfile` ja `docker-compose.yml`, mis teevad käivitamise väga lihtsaks.
-
-### Samm 1: Konfigureeri port
-Vaikimisi paneb `docker-compose.yml` Gravi tööle pordil **8080**.
-Kui see port on hõivatud, ava `docker-compose.yml` ja muuda rida:
+**Ülemkausta `docker-compose.yml` (väljavõte):**
 ```yaml
-ports:
-  - "8080:80"  <-- Muuda esimest numbrit (nt "8081:80")
+services:
+  # --- GRAV (Custom Build) ---
+  kirikiri:
+    build: 
+      context: ./kirikiri-grav
+    container_name: kirikiri-production
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./kirikiri-grav:/var/www/html
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 ```
 
-### Samm 2: Käivita
-Projektis olles kirjuta:
+## Haldustoimingud
+
+### Koodi ja sisu uuendamine
+Kui oled teinud muudatusi failides (nt `git pull` või failide muutmine):
+
+1. **Uuenda konteinerit (kui vaja buildida):**
+   ```bash
+   docker compose up -d --build kirikiri
+   ```
+
+### Vahemälu tühjendamine
+Gravi vahemälu tuleb tühjendada pärast konfiguratsiooni või koodi muutmist.
+
+**Käsk:**
 ```bash
-docker compose up -d --build
-```
-See ehitab PHP 8.3 + Apache konteineri ja paneb selle taustal käima.
-
-### Samm 3: Õiguste kontroll
-Kuna Grav kirjutab failisüsteemi (cache, logs, images), peab veebiserveril (kasutaja `www-data`, ID 33) olema õigus kirjutada.
-Kõige lihtsam on anda kausta omanikuõigus konteineri kasutajale:
-
-```bash
-docker exec -u root kirikiri-production chown -R www-data:www-data /var/www/html
+docker exec -it kirikiri-production bin/grav clearcache
 ```
 
-Nüüd peaks sait olema kättesaadav aadressil `http://<serveri-ip>:8080`.
+*Märkus: Grav 1.8+ beeta versioonides on käsk `clearcache` (ilma sidekriipsuta).*
 
-## 3. Nginx Reverse Proxy (kui soovid ilusat domeeni)
-
-Kuna sul on Nginx juba serveris (“ees”), siis seadista see suunama liiklust Gravi Docker konteinerile.
-
-Loo Nginx konfiguratsioon (nt `/etc/nginx/sites-available/kirikiri.conf`):
-
-```nginx
-server {
-    listen 80;
-    server_name kirikiri.ee www.kirikiri.ee; # Sinu domeen
-
-    location / {
-        proxy_pass http://localhost:8080; # Seesama port, mis docker-compose.yml failis
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-Aktiveeri sait ja lae Nginx uuesti:
-```bash
-sudo ln -s /etc/nginx/sites-available/kirikiri.conf /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-## 4. Hooldus ja uuendamine
-
-- **Koodi uuendamine**:
-  ```bash
-  git pull
-  docker compose restart
-  ```
-- **Cache tühjendamine** (kui teed muudatusi):
-  ```bash
-  docker exec -i -u www-data kirikiri-production bin/grav clearcache
-  ```
-
-
+### Nginx Proxy (Serveris)
+Serveris on Nginx seadistatud suunama `kirikiri.eu` päringud kohalikku porti `8080`.
