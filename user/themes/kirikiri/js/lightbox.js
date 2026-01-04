@@ -1,11 +1,12 @@
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('Lightbox script loaded (Inline Styles Version)');
+// Wait for all images to load before attaching lightbox handlers
+window.addEventListener('load', function () {
+    console.log('Lightbox script loaded (window.onload version)');
 
     // Select all images within the article content
     const contentImages = document.querySelectorAll('.article-content img');
     console.log('Found images for lightbox:', contentImages.length);
 
-    // Create the lightbox overlay element with INLINE STYLES to bypass CSS issues
+    // Create the lightbox overlay element with INLINE STYLES
     const lightboxOverlay = document.createElement('div');
     lightboxOverlay.id = 'lightbox-overlay';
 
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     lightboxOverlay.style.width = '100vw';
     lightboxOverlay.style.height = '100vh';
     lightboxOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
-    lightboxOverlay.style.zIndex = '2147483647'; // Max safe integer
+    lightboxOverlay.style.zIndex = '2147483647';
     lightboxOverlay.style.display = 'none';
     lightboxOverlay.style.justifyContent = 'center';
     lightboxOverlay.style.alignItems = 'center';
@@ -62,35 +63,33 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Opening lightbox for:', imgSrc);
         lightboxImage.src = imgSrc;
         lightboxImage.alt = imgAlt || '';
-
-        // Use flex directly
         lightboxOverlay.style.display = 'flex';
-
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
+        document.body.style.overflow = 'hidden';
     }
 
     // Function to close lightbox
     function closeLightbox() {
         console.log('Closing lightbox');
         lightboxOverlay.style.display = 'none';
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
         setTimeout(() => {
             lightboxImage.src = '';
         }, 100);
     }
 
-    // Add click event to images
+    // Add click event to ALL images (skip size check since it was problematic)
     contentImages.forEach(img => {
-        if (img.naturalWidth > 100 || img.width > 100) {
-            img.style.cursor = 'zoom-in';
-            img.style.transition = 'opacity 0.2s';
+        console.log('Attaching lightbox to image:', img.src, 'width:', img.width, 'naturalWidth:', img.naturalWidth);
 
-            img.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                openLightbox(this.src, this.alt);
-            });
-        }
+        // Apply to all images in article content, regardless of size
+        img.style.cursor = 'zoom-in';
+        img.style.transition = 'opacity 0.2s';
+
+        img.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openLightbox(this.src, this.alt);
+        });
     });
 
     // Close on overlay click
