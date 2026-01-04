@@ -817,19 +817,26 @@ sup a {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    display: flex;
+    z-index: 9999;
+    display: none;
     justify-content: center;
     align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
     backdrop-filter: blur(5px);
 }
 
 .lightbox-overlay.active {
-    opacity: 1;
-    visibility: visible;
+    display: flex !important;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .lightbox-image-container {
@@ -837,6 +844,9 @@ sup a {
     max-height: 90vh;
     position: relative;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .lightbox-image-container img {

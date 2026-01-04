@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('Lightbox script loaded');
+
     // Select all images within the article content
     const contentImages = document.querySelectorAll('.article-content img');
+    console.log('Found images for lightbox:', contentImages.length);
 
     // Create the lightbox overlay element
     const lightboxOverlay = document.createElement('div');
@@ -27,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to open lightbox
     function openLightbox(imgSrc, imgAlt) {
+        console.log('Opening lightbox for:', imgSrc);
         lightboxImage.src = imgSrc;
         lightboxImage.alt = imgAlt || '';
         lightboxOverlay.classList.add('active');
@@ -35,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to close lightbox
     function closeLightbox() {
+        console.log('Closing lightbox');
         lightboxOverlay.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
         setTimeout(() => {
@@ -51,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             img.addEventListener('click', function (e) {
                 e.preventDefault(); // Prevent default link behavior if wrapped in link
+                e.stopPropagation(); // Stop event bubbling
                 openLightbox(this.src, this.alt);
             });
         }
