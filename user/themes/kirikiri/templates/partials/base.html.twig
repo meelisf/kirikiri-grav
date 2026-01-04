@@ -34,7 +34,7 @@
     {% endblock %}
 
     {% block javascripts %}
-        {% do assets.addJs('theme://js/lightbox.js', 100) %}
+        <script src="{{ url('theme://js/lightbox.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Auto-convert images with titles to figures
