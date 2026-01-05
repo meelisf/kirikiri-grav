@@ -6,7 +6,7 @@
         <header class="article-hero {% if not hero_image %}no-image{% endif %}">
             {% if hero_image %}
                 <div class="article-hero-image">
-                    {{ hero_image.derived('webp').resize(900).html('', '', 'article-hero-image-img')|raw }}
+                    {{ hero_image.derivative('webp').resize(900).html('', '', 'article-hero-image-img')|raw }}
                 </div>
             {% endif %}
             <div class="article-hero-text">
