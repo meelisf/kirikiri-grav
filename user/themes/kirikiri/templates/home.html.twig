@@ -19,7 +19,7 @@
                 <article class="card">
                     {% if post.header.image %}
                         <a href="{{ post.url }}" class="card-image-link">
-                            <img src="{{ post.media[post.header.image].resize(800).derivative('webp').url }}" alt="{{ post.title }}" class="card-image">
+                            <img src="{{ post.media[post.header.image].derivative('webp').resize(800).url }}" alt="{{ post.title }}" class="card-image">
                         </a>
                     {% endif %}
                     
@@ -90,7 +90,7 @@
                 {% if featured.header.image %}
                     <div class="featured-image">
                         <a href="{{ featured.url }}">
-                            <img src="{{ featured.media[featured.header.image].resize(800).derivative('webp').url }}" alt="{{ featured.title }}">
+                            <img src="{{ featured.media[featured.header.image].derivative('webp').resize(800).url }}" alt="{{ featured.title }}">
                         </a>
                     </div>
                 {% else %}
@@ -149,7 +149,7 @@
                 <article class="card">
                     {% if post.header.image %}
                         <a href="{{ post.url }}" class="card-image-link">
-                            <img src="{{ post.media[post.header.image].resize(800).derivative('webp').url }}" alt="{{ post.title }}" class="card-image">
+                            <img src="{{ post.media[post.header.image].derivative('webp').resize(800).url }}" alt="{{ post.title }}" class="card-image">
                         </a>
                     {% else %}
                         <a href="{{ post.url }}" class="card-image-link card-placeholder">
