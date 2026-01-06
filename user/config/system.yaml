@@ -172,19 +172,19 @@ debugger:
   twig: true
 images:
   adapter: gd
-  default_image_quality: 85
+  default_image_quality: 80
   cache_all: false
   cache_perms: '0755'
   debug: false
   auto_fix_orientation: true
   seofriendly: false
   cls:
-    auto_sizes: false
+    auto_sizes: true
     aspect_ratio: false
     retina_scale: '1'
   defaults:
-    loading: auto
-    decoding: auto
+    loading: lazy
+    decoding: async
     fetchpriority: auto
   watermark:
     image: 'system://images/watermark.png'
