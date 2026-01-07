@@ -1,6 +1,7 @@
 {% extends 'partials/base.html.twig' %}
 
 {% block content %}
+
     {% set posts = page.collection() %}
     {% if posts|length == 0 %}
         {% set posts = page.find('/blog').children().order('date', 'desc') %}
@@ -201,5 +202,11 @@
             <a href="{{ base_url }}/blog" class="view-more-link">Vaata kõiki artikleid →</a>
         </div>
     {% endif %}
+    {% endif %}
+    {# Render page content (e.g. for Mastodon links or welcome text) #}
+    {% if page.content %}
+        <div class="home-content custom-content" style="margin-top: 3rem; text-align: center;">
+            {{ page.content|raw }}
+        </div>
     {% endif %}
 {% endblock %}
