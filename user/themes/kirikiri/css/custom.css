@@ -434,12 +434,12 @@ figcaption {
 
 .site-footer a,
 .site-footer a:visited {
-    color: inherit;
+    color: var(--text-muted) !important;
     text-decoration: underline;
 }
 
 .site-footer a:hover {
-    color: var(--accent-color);
+    color: var(--accent-color) !important;
 }
 
 /* --- Page Title --- */
