@@ -1,14 +1,73 @@
+# =============================================
+# KODUSERVERI DOCKER COMPOSE
+# (/home/meelis/koduserver/docker-compose.yml)
+# =============================================
+
 services:
+  # --- GRAV CMS (Custom Build) ---
   kirikiri:
-    build: .
+    build: 
+      context: ./kirikiri-grav
     container_name: kirikiri-production
     restart: unless-stopped
     ports:
-      # Maps host port 8080 to container port 80
-      # You can change 8080 to whatever available port you have
-      - "8080:80"
+      - "8080:8080"
     volumes:
-      # Mount the current directory into the container
-      - .:/var/www/html
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - ./kirikiri-grav:/var/www/html
+    security_opt:
+      - no-new-privileges:true
+
+  # --- FTP SERVER KAAMERATELE ---
+  # Docker isoleerib FTP serveri - näeb ainult kaamerad/ kausta
+  ftp:
+    image: delfer/alpine-ftp-server
+    container_name: ftp-kaamerad
+    restart: unless-stopped
+    ports:
+      - "21:21"                    # FTP control
+      - "21100-21110:21100-21110"  # Passiivne režiim
+    environment:
+      - USERS=${FTP_USER}|${FTP_PASS}|/home/${FTP_USER}|1000
+      - ADDRESS=${PASV_ADDRESS}
+      - MIN_PORT=21100
+      - MAX_PORT=21110
+    volumes:
+      - ./kaamerad:/home/${FTP_USER}
+    security_opt:
+      - no-new-privileges:true
+
+  # --- CLOUDFLARE DDNS ---
+  ddns:
+    image: oznu/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    restart: unless-stopped
+    environment:
+      - API_KEY=${CF_API_KEY}
+      - ZONE=${CF_ZONE}
+      - SUBDOMAIN=${CF_SUBDOMAIN}
+      - PROXIED=false
+
+# =============================================
+# SEADISTAMINE:
+# =============================================
+# 1. Loo .env fail:
+#    FTP_USER=reolink
+#    FTP_PASS=TugevParool123
+#    PASV_ADDRESS=ftp.kirikiri.eu
+#    CF_API_KEY=xxx
+#    CF_ZONE=kirikiri.eu
+#    CF_SUBDOMAIN=ftp
+#
+# 2. Käivita: docker compose up -d
+#
+# RUUTERI PORT FORWARDING:
+#   21 -> 192.168.1.196:21
+#   21100-21110 -> 192.168.1.196:21100-21110
+#
+# KAAMERA SEADISTUS (Reolink):
+#   Server: ftp.kirikiri.eu
+#   Port: 21
+#   Kasutaja: reolink
+#   Režiim: PASV
+#   Kaugkataloog: /
+# =============================================
