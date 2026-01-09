@@ -12,7 +12,7 @@
 {% if header.image %}
     {% set og_image = page.media[header.image] %}
 {% else %}
-    {% set og_image = uri.rootUrl(true) ~ '/user/themes/kirikiri/images/kirikiri.png' %}
+    {% set og_image = page.media['kirikiri.png'] ?: page.media['header.jpg'] ?: uri.rootUrl(true) ~ '/user/themes/kirikiri/images/kirikiri.png' %}
 {% endif %}
 
 {% if og_image %}
