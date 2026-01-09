@@ -432,6 +432,15 @@ figcaption {
     color: var(--text-muted);
 }
 
+.site-footer a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.site-footer a:hover {
+    color: var(--accent-color);
+}
+
 /* --- Page Title --- */
 .page-title {
     font-size: 2rem;
