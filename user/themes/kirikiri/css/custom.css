@@ -432,7 +432,8 @@ figcaption {
     color: var(--text-muted);
 }
 
-.site-footer a {
+.site-footer a,
+.site-footer a:visited {
     color: inherit;
     text-decoration: underline;
 }
