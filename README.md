@@ -23,4 +23,6 @@ bin/grav install
 
 ## Deploy & haldus
 
-Vaata `.instructions.md` ja `PROJEKTI_DOKUMENTATSIOON.md`.
+Vaata `.instructions.md`, `PROJEKTI_DOKUMENTATSIOON.md` ja `docs/`.
+Eriti `docs/2026-06-20-repo-umberkorraldus.md` (repo ümberkorralduse ja
+turvauuenduste ülevaade).
