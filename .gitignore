@@ -48,5 +48,13 @@ Thumbs.db
 # --- Saladused ---
 .env
 
+# --- Grav'i repo failid (ei kuulu meie reposse) ---
+/CHANGELOG.md
+/CODE_OF_CONDUCT.md
+/CONTRIBUTING.md
+/LICENSE.txt
+/SECURITY.md
+/now.json
+
 # --- Arenduse müra ---
 /needs_fixing.txt
