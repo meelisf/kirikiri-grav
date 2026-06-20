@@ -1,18 +1,52 @@
-# Grav Core
-cache/*
-logs/*
-images/*
-assets/*
-backup/*
-tmp/*
-.ds_store
-.thumbs
+# =============================================
+# Kirikiri Grav — Skinny repo
+# Repos hoitakse AINULT: teema (kirikiri), sisu, config, blueprintid.
+# Grav tuum, pluginad ja vaiketeemad uuenevad admin/GPM kaudu.
+# =============================================
 
-# User Generated
-user/data/*
-!user/data/.gitkeep
+# --- Grav tuum (GPM selfupgrade kaudu) ---
+/system/
+/vendor/
+/index.php
+/bin/
+/composer.json
+/composer.lock
+/now.json
+/webserver-configs/
 
-# OS
+# --- Pluginad (admin/GPM kaudu) ---
+/user/plugins/*
+!/user/plugins/.gitkeep
+
+# --- Teemad: ainult kirikiri hoitakse repos ---
+/user/themes/*
+!/user/themes/.gitkeep
+!/user/themes/kirikiri/
+
+# --- Kontod (turvalisus — parooli hash'id) ---
+/user/accounts/*
+!/user/accounts/.gitkeep
+
+# --- Runtime andmed ---
+/user/data/*
+!/user/data/.gitkeep
+
+# --- Grav genereeritud kaustad ---
+/cache/
+/logs/
+/images/
+/assets/
+/backup/
+/tmp/
+/.thumbs
+
+# --- OS ---
 .DS_Store
 Thumbs.db
+.ds_store
+
+# --- Saladused ---
 .env
+
+# --- Arenduse müra ---
+/needs_fixing.txt

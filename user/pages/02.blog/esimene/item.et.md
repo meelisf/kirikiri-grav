@@ -1,10 +1,17 @@
 ---
-title: "Tehislik tarumõistus"
-date: "2025-12-11"
-image: "tarumõistus.jpg"
+title: 'Tehislik tarumõistus'
+date: '11-12-2025 00:00'
+image: tarumõistus.jpg
+featured: true
 taxonomy:
-    tag: [TI, Kultuur, Mesilased]
-    author: ["Meelis Friedenthal"]
+    tag:
+        - TI
+        - Kultuur
+        - Mesilased
+    author:
+        - 'Meelis Friedenthal'
+sitemap:
+    lastmod: '05-01-2026 14:31'
 ---
 
 See ei ole ainult nii, vaid ka naa. Sul on absloluutselt õigus. Aeg on jõgi. 
@@ -19,7 +26,7 @@ Samas võib TI-sid koolitada kellegi kirjaniku stiili peal ning mõned katsed on
 
 Võimalik, et "keskmine inimene" (või vähemalt keskmine testgrupp) eelistabki madala entroopiaga (loe: etteaimatavat) teksti. Hea tekst võib tihti olla kare (sõna mu mõtte kare kostüüm), nõuab pingutust, seal on ootamatusi. Masina tekst on sile nagu muna ja ei püsi püsti. 
 
-Võibolla nagu kiirtoit – optimeeritud olema keskmine, aga rasvaselt ja suhkurdatult sõltuvust tekitav.
+Võibolla nagu kiirtoit – optimeeritud olema keskmine, aga rasvane ja suhkurdatult sõltuvust tekitav.
 
 Selle üle peaks veel mõtlema, aga tulevane [Prima Vista](https://kirjandusfestival.tartu.ee/) lubab neid teemasid arutada. 
 
