@@ -62,7 +62,7 @@ Siiski pigem üllatavalt hea tulemus, arvestades, et käsikirjalise tekstiga ei 
 
 ## VUTT ##
 
-Kui tuvastustöö tehtud, siis seisis kogu materjal tükk aega niisama. Olid küll mingid plaanid, et tuleks see teha kättesaadavaks, aga küsimus oli, kuidas? Sügisel aga tulid suhteliselt koos välja Google stuudios võimalus luua rakendusi ja Claude 4.5 Opus. Kirjeldasin oma mõtet ja nii sai umbes kuu ajaga valmis tehtud lehekülg, millele sai nimeks VUTT (**V**ara**U**ssaegsete **T**ekstide **T**öölaud). Logo soovitas Rahel Toomik ja see pärineb dokumendist _Een kort och enfaldigh Lijkpredikan ... Dorpt: J. Vogel, 1642_.
+Kui tuvastustöö tehtud, siis seisis kogu materjal tükk aega niisama. Olid küll mingid plaanid, et tuleks see teha kättesaadavaks, aga küsimus oli, kuidas? Sügisel aga tulid suhteliselt koos välja Google stuudios võimalus luua rakendusi ja Claude 4.5 Opus. Kirjeldasin oma mõtet ja nii sai umbes kuu ajaga valmis tehtud lehekülg, millele sai nimeks [VUTT (**V**ara**U**usaegsete **T**ekstide **T**öölaud)](https://vutt.utlib.ut.ee/). Logo soovitas Rahel Toomik ja see pärineb dokumendist _Een kort och enfaldigh Lijkpredikan ... Dorpt: J. Vogel, 1642_.
 
 ![VUTT](Screenshot%20from%202026-01-06%2012-08-41.png "VUTT esileht, praeguse seisuga")
 
