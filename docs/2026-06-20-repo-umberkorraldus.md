@@ -141,6 +141,16 @@ need ei lähe repose.
 
 ## 4. Edasised plaanid — migreerimine Grav 2.0-le
 
+> ⚠️ **AEGUNUD (seisuga 23.08.2026).** §4.1 ja §4.7 ütlevad "ootame 2.0
+> GA-d" — GA ilmus 21.06.2026 ja on nüüd 2.0.21 juures. Ka §4.4 ja §4.5
+> on osaliselt valed (plugina slug on `migrate-grav`; Nginxi asemel on
+> meil Apache + Cloudflare Tunnel).
+>
+> **Loe selle asemel:** [`2026-08-23-grav2-otsus-ja-pluginauuendused.md`](2026-08-23-grav2-otsus-ja-pluginauuendused.md)
+>
+> Allolev jääb alles kui otsuse ajalugu (§4.2 "mida 2.0 toob" ja §4.6
+> pluginate tabel kehtivad endiselt).
+
 ### 4.1 Tähtis uuendus (20. juuni 2026)
 
 Algne plaan (vt ajalugu allpool) eeldas, et jätkame 1.8 beta'd ja
