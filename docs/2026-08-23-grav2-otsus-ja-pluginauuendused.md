@@ -479,6 +479,66 @@ tüüpi. See on CLI eripära, mitte veebipäringu käitumine — ära aja selleg
 segadusse. Usaldusväärne CLI-proov peab ise tegema
 `$grav['config']->init(); $grav['streams']; $grav['themes']->init();`.
 
+### 10.7 Mallivaliku sildid on eestikeelsed (`onAdminPageTypes`)
+
+**Probleem:** pärast §10.1 muudatust ei olnud rippmenüüs ühtki kirjet nimega
+"Artikkel" — seal seisid `Default`, `Item`, `Page`. Põhjus: admini
+mallivaliku sildid tulevad Gravis **paljalt failinimest**,
+`Types::pageSelect()` (`system/src/Grav/Common/Page/Types.php:126`) teeb
+`ucfirst(str_replace('_', ' ', $name))`. Blueprinti `title:` sinna **ei jõua
+kunagi** — see paistab ainult vormi päises. Nii et "Default" oli tegelikult
+artikkel, aga seda ei olnud kuidagi näha.
+
+**Lahendus:** teema `kirikiri.php` tellib `onAdminPageTypes` sündmuse. Api
+`BlueprintController::filterPageTypes()` laseb nimekirja sellest läbi (sama
+leping, mis klassikalisel adminil oli), seega sildid saab ümber nimetada ilma
+plugina puutumist. Ümber nimetatakse **ainult sildid** — mallide võtmed jäävad
+samaks, sest sama nimekiri toidab ka redigeerimisvormi mallivalikut.
+
+`default` tõstetakse ühtlasi nimekirja etteotsa, sest admin2 tagavaraloogika
+(`nodes/19`: `V.find(t => t.type === "default") ?? V[0]`) langeks siis
+halvimalgi juhul artikli peale.
+
+Mõõdetud tulemus (api loogikat täpselt korrates):
+
+| enne | pärast |
+|---|---|
+| `default → Default` | **`default → Artikkel`** (nimekirjas esimene) |
+| `item → Item` | `item → Artikkel (vana mall)` |
+| `page → Page` | `page → Lihtleht` |
+| `home → Home` | `home → Avaleht` |
+| `archives → Archives` | `archives → Artiklite koond` |
+| `tags → Tags` | `tags → Siltide koond` |
+| `authors → Authors` | `authors → Autorite koond` |
+
+`external`, `modular` ja `root` jäid ingliskeelseks — neid ei kasutata.
+
+### 10.8 Malli eelvalimine URL-ist
+
+Admin2 "Lisa leht" (`/admin/pages/new`, `nodes/19`) loeb algväärtused
+päringuparameetritest: `template`, `parent`, `title`, `kind`
+(`page` / `folder` / `module`). Seega asendab endist "Lisa artikkel" nuppu
+lihtsalt brauseri järjehoidja:
+
+```
+https://kirikiri.eu/admin/pages/new?kind=page&template=item&parent=/blog
+```
+
+Kui `template=` väärtust nimekirjas ei ole, langeb admin2 tagasi `default`-ile
+ja selle puudumisel nimekirja esimesele kirjele.
+
+**Mis EI tööta, kontrollitud:**
+- Admin2-l **ei ole** vaikemalli seadet — `admin2.yaml`-is on kokku `enabled`
+  ja `route`.
+- `default`-i peitmine `plugins.admin.hide_page_types`-iga **ei vali** `item`-it:
+  tagavara on nimekirja esimene kirje. Ja sama filtreeritud nimekiri toidab
+  redigeerimisvormi mallivalikut, seega peidetud mall võib olemasoleval lehel
+  salvestamisel vahetuda.
+- **`child_type: item`** ("/blog alamlehed on vaikimisi artiklid") ei ole
+  admin2-s realiseeritud — api serveerib välja
+  (`BlueprintController.php:1383`), aga admin2 bundle'is ei esine sõna
+  `child_type` kordagi.
+
 ### 10.7 Lahtine
 
 `user/config/plugins/add-page-by-form.yaml` on jälgitav, aga plugin
