@@ -338,15 +338,21 @@ Mõõdetud enne ja pärast (`bin/grav clearcache`):
 Käsk on `clearcache`, **mitte** `clear-cache` (viimane pakub Symfony
 sarnasusotsinguna hoopis midagi muud ja ei tee midagi).
 
-**Eksitav kõrvaltee, mis maksis aega.** `Themes.php:97` registreerib teema
-blueprintid ainult siis, kui `theme://blueprints/pages/` on olemas — meie fail
-on `blueprints/item.yaml`, st ühe kausta võrra "vales" kohas. See NÄEB VÄLJA
-nagu põhjus, aga ei ole: `Pages.php:1497` proovib teadlikult mõlemat asukohta
-(`theme://blueprints/pages/`, kui pole, siis `theme://blueprints/`). Vana
-asukoht on täiesti töötav — testitud vana asukohaga + tühja vahemäluga, väli
-on olemas. **Faili ei kolitud.** (Kolimine parandab sümptomi ka tühjendamata
-vahemäluga, sest siis registreerib `Themes.php` tee otse ja `getTypes()`
-vahemälust mööda — see oleks maskeerinud päris vea.)
+**Kõrvaltee, mis maksis aega — ja mille kohta siin seisis liiga tugev väide.**
+`Themes.php:97` registreerib teema blueprintid ainult siis, kui
+`theme://blueprints/pages/` on olemas; meie failid olid `blueprints/*.yaml`, st
+ühe kausta võrra "vales" kohas. See ei olnud selle vea põhjus:
+`Pages.php:1497` proovib teadlikult mõlemat asukohta (`theme://blueprints/pages/`,
+kui pole, siis `theme://blueprints/`), ja vana asukohaga + tühja vahemäluga on
+väli päriselt olemas.
+
+Aga "täiesti töötav" oli liiga tugev. Vana asukoht töötab **ainult**
+`Pages::getTypes()` tagavaravariandi kaudu, mis registreerib iga tüübi tee
+eraldi (`$locator->addPath('blueprints', "pages/$type.yaml", ...)`) — ja just
+see funktsioon on see, mille tulemust vahemälustatakse. Uues asukohas
+registreerib `Themes.php:97` terve `theme://blueprints` kataloogi striimi, mis
+ei sõltu `types` vahemälust üldse. Seepärast **kolitud 15.09 ikkagi**
+asukohta `user/themes/kirikiri/blueprints/pages/` — vt §10.
 
 **Õppetund, mis kehtib igale major-uuendusele:** kui wizard toob `cache/` üle,
 **tühjenda vahemälu kohe pärast Promote'i**. Serialiseeritud objektid vanast
@@ -356,3 +362,125 @@ vaid vaikselt puuduva funktsionaalsusena.
 **Verifitseeritud pärast tühjendamist:** `https://kirikiri.eu/et` → 200,
 `/et/blog/esimene` → 200 ja hero-pilt renderdub
 (`article-hero-image-img ... derivative=webp`).
+
+---
+
+## 10. `default` on nüüd artiklimall (15.09.2026)
+
+**Probleem:** `add_modals` nupu kadumisega (§8.5) tuli uut postitust luues mall
+käsitsi valida, ja vale mall (`default`) andis artikli ilma hero-pildi,
+kuupäeva, autori ja siltideta. Meelis: *"paneme, et default oleks see item, st
+et ei ole vaja otsida õiget malli."*
+
+**Miks see on õige koht parandada:** uue lehe mall on Grav 2.0-s **alati**
+`default`, mõlemas kihis —
+`api/classes/Api/Controllers/PagesController.php:475`
+(`$template = $body['template'] ?? 'default'`) ja admin2 redaktor
+(`?.template||"default"`). Seega on ainus viis "malli mitte otsida" see, et
+`default` ISE oleks artiklimall.
+
+### 10.1 Mallid
+
+| Mall | Roll |
+|---|---|
+| `default.html.twig` | **artikkel** — hero-pilt, kuupäev, autor, sildid |
+| `item.html.twig` | alias: `{% extends 'default.html.twig' %}` |
+| `page.html.twig` | **lihtleht** — ainult pealkiri + sisu (kasutab /info) |
+
+Artikli märgistus on baitide kaupa sama, mis varem `item.html.twig`-is;
+`item` jääb alles, sest kõik olemasolevad postitused on failid `item.et.md`.
+`/info` sai päisesse `template: page` — `Page.php:617` lubab päises malli üle
+kirjutada, seega faili ümber nimetada ei olnud vaja.
+
+### 10.2 Blueprintid: `blueprints/pages/`
+
+Kõik teema lehe-blueprintid kolisid `blueprints/`-ist **`blueprints/pages/`**-i
+(põhjus §9). `pages/default.yaml` sisaldab:
+
+- `header.image` (`filepicker`, Featured Image) + `header.media_order`
+- **eeltäitmine**, mis varem tuli `add_modals` nupust:
+  `header.taxonomy` vaikimisi `author: [Meelis Friedenthal]`, `tag: [uudised]`,
+  ja `header.date` vaikimisi `\Grav\Theme\Kirikiri::getCurrentDate`.
+
+**`header.date` juures on `toggleable: false` HÄDAVAJALIK.** Süsteemi
+blueprintis on see väli `toggleable: true`, ja api `blueprintHeaderDefaults()`
+jätab toggleable väljad teadlikult vahele ("their `default:` is a placeholder
+the form shows until the field is toggled on"). Päritud kujul ei kirjutataks
+kuupäeva uuele lehele üldse.
+
+### 10.3 Naelutatud blueprintid — lõks, mida tasub mäista
+
+`default` blueprint on see, mille saavad **kõik ilma oma blueprintita mallid**.
+Mõõdetud: enne naelutamist pärisid artiklivälju ka `home`, `archives`, `tags`,
+`authors`, `blog` ja `taxonomy`. Praktiline oht ei olnud kosmeetiline: kui
+mõnda neist adminis salvestada, kirjutataks sisse eeltäidetud
+`taxonomy.tag: [uudised]` ja **koondleht satuks ise `uudised`-sildi alla**.
+
+Seepärast on igal neist nüüd oma blueprint, mille vanem on naelutatud
+süsteemi külge:
+
+```yaml
+'@extends':
+    type: default
+    context: system://blueprints/pages   # MITTE blueprints://, muidu pärib teema oma
+```
+
+Kontrollitud, et `blueprints://` kaudu iseendale viitamine EI tekita
+rekursiooni (`pages/default.yaml` laiendab `blueprints://pages` kaudu süsteemi
+faili ja pärib korrektselt `header.title`, `content: markdown`,
+`header.media_order` ning options-tabi).
+
+**LÕKS:** iga uus mall, mis lisatakse `templates/`-isse ilma oma blueprintita,
+pärib artiklivälju ja eeltäitmise. Kui see pole soovitud, lisa talle
+naelutatud blueprint.
+
+### 10.4 Ajavöönd
+
+`system.timezone` oli `null` → konteineri PHP jooksis **UTC**-s ja eeltäidetud
+kuupäev oleks tulnud 3 tundi taha (mõõdetud: `05:28` vs hosti `08:28 EEST`).
+Seatud **`Europe/Tallinn`**. Rakendub `InitializeProcessor.php:374` juures, st
+veebipäringus; olemasolevate lehtede kuvatavad kuupäevad ei muutu, sest need
+on salvestatud `d-m-Y H:i` stringina ja parsitakse+vormindatakse samas
+ajavööndis.
+
+### 10.5 Kustutatud surnud failid
+
+- `user/config/plugins/admin.yaml` — sisaldas ainult `add_modals` plokki
+- `user/blueprints/admin/pages/new_post.yaml` — selle nupu vorm
+  (`user/blueprints/` jäi tühjaks ja kadus)
+- `user/config/plugins/migrate-grav.yaml` (oli jälgimata)
+
+**Täpsustus §8.5-le:** `admin.yaml` ei olnud päris orb — api loeb endiselt
+`plugins.admin.hide_page_types` ja `hide_modular_page_types`
+(`BlueprintController.php:146`), millega saab mallivalikut kärpida. Meie fail
+neid ei seadnud, seega kustutamisega ei kadunud midagi.
+
+### 10.6 Verifitseeritud
+
+- Kõik lehed 200: `/et`, `/et/blog`, `/et/blog/esimene`,
+  `/et/blog/suhtumine-religiooni`, `/et/blog/vutt`, `/et/info`, `/et/tags`,
+  `/et/authors`
+- Artikkel sisaldab endiselt `article-hero-image-img`, `article-date`,
+  `article-category`
+- `/et/info` renderdub lihtlehena (`article-hero card no-image`, **ei** sisalda
+  `article-date` ega `article-category`)
+- `/et/blog/toyota-avensis` ja `/et/blog/test` on 404, mõlemal
+  `published: false` — puutumata failid, mitte selle muudatuse tagajärg
+- Blueprint: `default` ja `item` = Featured Image JAH; `page`, `home`,
+  `archives`, `tags`, `authors`, `blog`, `taxonomy` = ei
+- Eeltäitmine, api `blueprintHeaderDefaults()` loogikat täpselt korrates:
+  `header.date` = kohalik aeg, `header.taxonomy` =
+  `{"author":["Meelis Friedenthal"],"tag":["uudised"]}`
+
+**NB testimise kohta:** CLI-s `InitializeProcessor::initializeCli()` **ei
+registreeri `theme://` striimi üldse** (`isStream('theme://') === false`),
+seega seal ei ole teema blueprintid nähtavad ja `Pages::getTypes()` annab 2
+tüüpi. See on CLI eripära, mitte veebipäringu käitumine — ära aja sellega ennast
+segadusse. Usaldusväärne CLI-proov peab ise tegema
+`$grav['config']->init(); $grav['streams']; $grav['themes']->init();`.
+
+### 10.7 Lahtine
+
+`user/config/plugins/add-page-by-form.yaml` on jälgitav, aga plugin
+`add-page-by-form` ei ole paigaldatud (`enabled: false`) — järgmine orb,
+puutumata jäetud.

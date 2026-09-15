@@ -1,0 +1,8 @@
+title: Artikkel (item)
+
+# Ajalooline mallinimi: kõik enne 15.09.2026 tehtud postitused on failid
+# `item.et.md`. Väljad tulevad tervenisti teema `default.yaml`-ist, sinna on
+# kirjutatud ka põhjendus, miks artiklimall on `default`.
+'@extends':
+    type: default
+    context: blueprints://pages

@@ -1,0 +1,58 @@
+title: Artikkel
+
+# `default` ON TEADLIKULT ARTIKLIMALL.
+# Põhjus: uue lehe mall on Grav 2.0-s alati `default` — api
+# PagesController.php:475 (`$body['template'] ?? 'default'`) ja admin2 redaktor
+# (`?.template||"default"`). Nii ei pea uut postitust luues malli käsitsi
+# otsima. Lihtleht (nt /info) on eraldi mall `page`.
+# Vanad postitused on failid `item.et.md` — `item.yaml` on selle aliaseks.
+'@extends':
+    type: default
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      type: tabs
+
+      fields:
+        content:
+          fields:
+            header.image:
+              type: filepicker
+              folder: '@self'
+              label: Featured Image
+              preview_images: true
+              accept:
+                - .png
+                - .jpg
+                - .jpeg
+                - .webp
+              ordering: header.title
+
+            header.media_order:
+              type: pagemedia
+              label: Page Media
+              ordering: header.image
+
+        options:
+          fields:
+            publishing:
+              fields:
+                # Eeltäitmine, mis varem tuli klassikalise admini `add_modals`
+                # nupust "Lisa artikkel". `toggleable: false` on VAJALIK:
+                # api blueprintHeaderDefaults() jätab toggleable väljad
+                # teadlikult vahele, seega päritud toggle'iga ei kirjutataks
+                # kuupäeva uuele lehele üldse.
+                header.date:
+                  toggleable: false
+                  data-default@: '\Grav\Theme\Kirikiri::getCurrentDate'
+
+            taxonomies:
+              fields:
+                header.taxonomy:
+                  default:
+                    author:
+                      - 'Meelis Friedenthal'
+                    tag:
+                      - uudised

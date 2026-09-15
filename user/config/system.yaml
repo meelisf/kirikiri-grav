@@ -1,5 +1,5 @@
 absolute_urls: false
-timezone: null
+timezone: Europe/Tallinn
 default_locale: et
 param_sep: ':'
 wrapped_site: false

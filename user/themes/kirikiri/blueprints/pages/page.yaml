@@ -1,0 +1,9 @@
+title: Lihtleht
+
+# Vanem on NAELUTATUD `system://`-i külge, et see EI päriks teema
+# `default.yaml`-i artiklivälju ega eeltäidetud autorit/silti. Ilma
+# naelutamiseta satuks see leht adminis salvestamisel kogemata `uudised`
+# sildi alla ja tekiks Featured Image väli, mida mall ei kasuta.
+'@extends':
+    type: default
+    context: system://blueprints/pages

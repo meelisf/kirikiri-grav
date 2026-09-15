@@ -1,6 +1,7 @@
 ---
 title: Info
 menu: Info
+template: page
 sitemap:
     lastmod: '05-01-2026 09:08'
 ---
