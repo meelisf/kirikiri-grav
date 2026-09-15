@@ -292,13 +292,67 @@ Grav 2.0 kirjutab saladusi kohtadesse, mida repo varem jälgis:
   migreerimise tekitatud, aga telefoni- või skanneripilt on tavaliselt 3–8 MB,
   seega praktikas ei saa artiklile pilti lisada. Parandus nõuab `php.ini`
   ülekirjutust `Dockerfile`-is **ja** `upload_limit`-i tõstmist.
-- **`user/config/plugins/admin.yaml`** on orb — `admin` plugin asendus
-  `admin2`-ga, mis seda faili ei loe. Sees on ainult `add_modals` ("Lisa
-  artikkel" nupp, blueprint `user/blueprints/admin/pages/new_post.yaml`). Kui
-  nupp on admin2-s kadunud, tuleb sama asi admin2 keeles uuesti seadistada.
+- **`add_modals` ("Lisa artikkel" nupp) on pöördumatult kadunud.** Kinnitatud
+  15.09: `grep -rl add_modals user/plugins/ system/` ei anna ühtki tabamust —
+  see oli klassikalise `admin` plugina funktsioon, `admin2` ega `api` seda ei
+  tunne. Seega on orvud **kaks** jälgitavat faili:
+  `user/config/plugins/admin.yaml` (ainult see `add_modals` plokk) ja
+  `user/blueprints/admin/pages/new_post.yaml` (nupu vorm: eeltäidetud autor,
+  märksõna `uudised`, `header.date` teema meetodist `getCurrentDate`,
+  `route: /blog`, `name: item`).
+  Uus töövoog: **Lisa leht → tüüp `Item`**. Eeltäitmine on kadunud. Kui seda
+  tahetakse tagasi, tuleb autori/märksõna/kuupäeva `default:` väärtused tõsta
+  `new_post.yaml`-ist teema blueprinti `blueprints/item.yaml` — siis
+  rakenduvad need iga uue Item-lehe vormil.
 - **`user/config/plugins/migrate-grav.yaml`** (`enabled: false`) jäi maha
   pärast plugina eemaldamist — jälgimata, võib kustutada.
 - **`user/pages/02.blog/test/`** — migreerimise testartikkel
   (`published: false`) koos pildiga. Jälgimata: kustuta või avalda.
 - **`markdown-notices` 1.2.0** (§7) — 2.0 juures kaaluda asendamist
   `github-markdown-alerts`-iga. Endiselt tegemata.
+
+---
+
+## 9. Migreerimisjärgne vahemälu — kaks sümptomit, üks põhjus (15.09.2026)
+
+**Sümptomid:** admin2-s puudus artiklil väli *Featured Image*, ja uue lehe
+lisamisel ei saanud malli valida (testleht tekkis `default.et.md`-na, mitte
+`item.et.md`-na, seega ilma teema hero-pildi ja kuupäevata).
+
+**Põhjus:** Promote tõi Grav 1.8 `cache/` kausta muutmata kujul üle — see on
+`.migration-complete` `promoted` nimekirjas. `Pages::getTypes()`
+(`system/src/Grav/Common/Page/Pages.php:1511`) vahemälustab serialiseeritud
+`Types` objekti võtme `md5('types')` all. 1.8 ajal serialiseeritud objekt
+loeti 2.0 koodiga tagasi ja tuli **tühjana** välja.
+
+Mõõdetud enne ja pärast (`bin/grav clearcache`):
+
+| | Enne | Pärast |
+|---|---|---|
+| `Pages::getTypes()` | **0 tüüpi** | **12 tüüpi**, sh `item` |
+| `Pages::types()` (admin2 mallivalik) | tühi | `archives, authors, blog, default, external, home, item, modular, root, tags, taxonomy` |
+| blueprint `item` title | `NULL` | `Blog Post` |
+| `header.image` väli | **PUUDUB** | **OLEMAS** (`filepicker`, "Featured Image") |
+
+**Lahendus:** `docker exec -w /var/www/html kirikiri-production bin/grav clearcache`.
+Käsk on `clearcache`, **mitte** `clear-cache` (viimane pakub Symfony
+sarnasusotsinguna hoopis midagi muud ja ei tee midagi).
+
+**Eksitav kõrvaltee, mis maksis aega.** `Themes.php:97` registreerib teema
+blueprintid ainult siis, kui `theme://blueprints/pages/` on olemas — meie fail
+on `blueprints/item.yaml`, st ühe kausta võrra "vales" kohas. See NÄEB VÄLJA
+nagu põhjus, aga ei ole: `Pages.php:1497` proovib teadlikult mõlemat asukohta
+(`theme://blueprints/pages/`, kui pole, siis `theme://blueprints/`). Vana
+asukoht on täiesti töötav — testitud vana asukohaga + tühja vahemäluga, väli
+on olemas. **Faili ei kolitud.** (Kolimine parandab sümptomi ka tühjendamata
+vahemäluga, sest siis registreerib `Themes.php` tee otse ja `getTypes()`
+vahemälust mööda — see oleks maskeerinud päris vea.)
+
+**Õppetund, mis kehtib igale major-uuendusele:** kui wizard toob `cache/` üle,
+**tühjenda vahemälu kohe pärast Promote'i**. Serialiseeritud objektid vanast
+tuumast ei pruugi uue koodiga ühilduda ja viga ei näita ennast veateatena,
+vaid vaikselt puuduva funktsionaalsusena.
+
+**Verifitseeritud pärast tühjendamist:** `https://kirikiri.eu/et` → 200,
+`/et/blog/esimene` → 200 ja hero-pilt renderdub
+(`article-hero-image-img ... derivative=webp`).
