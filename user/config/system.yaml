@@ -132,8 +132,6 @@ twig:
   debug: true
   auto_reload: true
   autoescape: true
-  undefined_functions: true
-  undefined_filters: true
   safe_functions: {  }
   safe_filters: {  }
   umask_fix: false
@@ -212,7 +210,7 @@ session:
   domain: null
   path: null
 gpm:
-  releases: testing
+  releases: stable
   official_gpm_only: true
   verify_peer: true
 updates:

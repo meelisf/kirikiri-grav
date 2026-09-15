@@ -21,8 +21,8 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
     sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf
 
-# Lubame mod_rewrite
-RUN a2enmod rewrite
+# Lubame mod_rewrite ja mod_expires (viimane teenindab .htaccess ExpiresByType plokki)
+RUN a2enmod rewrite expires
 
 # 4. Õiguste korrastamine
 # Apache vajab ligipääsu teatud kaustadele, et logida ja PID faile hoida

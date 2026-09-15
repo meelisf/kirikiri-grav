@@ -9,6 +9,12 @@ homepage: https://github.com/getgrav/grav-theme-kirikiri
 keywords: kirikiri, astro, migration, magazine
 license: MIT
 
+# Testitud Grav 2.0.27 vastu 2026-09-14 eraldi liivakastis: kõik lehed 200,
+# null PHP-hoiatust, <body> väljund identne peale Gravi enda pildimõõtude
+# paranduse. Twig jääb 2.0-s 3.x peale, teema kasutab ainult url() ja |raw.
+compatibility:
+  grav: ['1.7', '1.8', '2.0']
+
 form:
   validation: loose
   fields:

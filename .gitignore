@@ -48,6 +48,21 @@ Thumbs.db
 # --- Saladused ---
 .env
 
+# Grav 2.0 auto-genereeritud saladused (CSRF salt, API JWT võti).
+# Kirjutatakse 0600 õigustega, taastuvad ise, kui kustutada.
+/user/config/security-private.php
+/user/config/plugins/*-private.php
+
+# api plugin kirjutab siia popularity-statistika HMAC-soola (külastaja IP
+# pseudonüümimiseks). Plugina enda kommentaar: "a committed salt would be
+# globally known and defeat the keyed-hash protection entirely."
+# Kui siia kunagi tekib päris api-seadistusi, tuleb sool eraldi failiks tõsta.
+/user/config/plugins/api.yaml
+
+# migrate-grav wizardi lõpumarker — viitab varukoopiale backup/-is, mis on
+# nagunii ignore'itud.
+/.migration-complete
+
 # --- Grav'i repo failid (ei kuulu meie reposse) ---
 /CHANGELOG.md
 /CODE_OF_CONDUCT.md

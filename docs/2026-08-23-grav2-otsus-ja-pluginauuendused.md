@@ -1,7 +1,9 @@
 # Grav 2.0 migreerimisotsus + pluginauuendused
 
 **Kuupäev:** 23. august 2026
-**Staatus:** pluginad uuendatud ✅ · migreerimine 2.0-le EDASI LÜKATUD (vt §3)
+**Staatus:** pluginad uuendatud ✅ · migreerimine 2.0-le **TEHTUD 14.09.2026** —
+vt §8. §3–§6 on alles otsuse ajalooks, aga §3 ("miks täna ei migreerunud") ja
+§4 (käivitustingimus) on nüüdseks möödas.
 **Asendab:** `2026-06-20-repo-umberkorraldus.md` §4.1 ja §4.7 (need on aegunud —
 seal seisab "ootame 2.0 GA-d", GA on nüüdseks ammu käes)
 
@@ -186,3 +188,117 @@ muutused (tuum ja pluginad on `.gitignore`'is, seega repo müra ei teki).
 - **`markdown-notices` 1.2.0** — viimane release 06.05.2026. Vana plaan
   soovitas asendada `github-markdown-alerts`'ga 2.0 juures. Jäta
   migreerimise järgseks, mitte eelseks.
+
+---
+
+## 8. Migreerimine tehtud — 14.09.2026
+
+§4 käivitustingimus **ei olnud täidetud** (14.09 kontroll: 2.0.22…2.0.27 +
+2.1.0…2.1.4 kahe nädalaga, advisory-klaster 09.–10.09). Migreeriti sellest
+hoolimata, sest §3.1 pool kaalus üles: 1.8.0-beta.29 on 28.12.2025 külmutatud
+tuum, mis ei saa enam ühtki turvaparandust, ja §5 admini umbtee ei olnud muul
+viisil lahendatav.
+
+**Sihtversioon 2.0.27, mitte `latest` (2.1.4) — teadlik valik.** Ükski meie
+plugin ei deklareeri `compatibility: 2.1`, ainult `2.0`. Wizardi vaikimisi
+`latest` oleks andnud 2.1.4 ilma ühegi ühilduvusdeklaratsioonita.
+
+| | Enne | Pärast |
+|---|---|---|
+| Tuum | 1.8.0-beta.29 | **2.0.27** |
+| Admin | `admin` 1.10.59 | **`admin2` 2.1.17** |
+| API | — | **`api` 1.0.30** (uus, admin2 sõltuvus) |
+| flex-objects | 1.3.8 | **1.4.15** |
+| Teema `kirikiri` | 1.0.0 | 1.0.0, muutmata |
+
+§5 umbtee (`flex-objects` `blocked_upgrade` nõudis `grav >= 2.0.0-rc.10`)
+**lahenes iseenesest** — 2.0 juures pakutakse 1.4.15.
+
+### 8.1 Mis läks migreerimisel valesti
+
+**Promote kustutas kaks jälgitavat faili:** `.gitignore` ja `robots.txt`.
+Mõlemad taastatud `git checkout`-iga. `.gitignore` kadumine on ohtlik — ilma
+selleta läheb kogu Gravi tuum, `vendor/` ja pluginad sellesse "skinny" reposse.
+**Kontrolli `git status`-iga iga major-uuenduse järel.** Wizard säilitas `.git`
+korrektselt; kontod, paroolid ja jaanuse granuleeritud õigused migreerusid,
+juurde tekkisid `access.api.*` plokid.
+
+**Promote chownis kogu repo `www-data:www-data 644`-ks** — 66 jälgitavat faili
+70-st, sh `docs/`, `.htaccess`, `docker-compose.yml` ja kogu
+`user/themes/kirikiri/`. Tagajärg: `meelis` ei saa enam oma teemat ega
+dokumentatsiooni redigeerida (grupil on ainult `r--`). `.git` ise jäi
+`meelis:www-data`, seega git töötab. Vt §8.5 — vajab käsitsi parandamist
+`meelis:www-data` + `664`/`2775` peale.
+
+**`security.salt` oli avalikus gitis.** 2.0 tõstis soola jälgitavast
+`user/config/security.yaml`-ist faili `user/config/security-private.php`
+(0600), **aga ei genereerinud uut väärtust** — sama sool oli repos
+`github.com/meelisf/kirikiri-grav` (avalik) alates esimesest commitist.
+Kasutus: CSRF-nonce'ide allkirjastamine + admini rate-limit.
+**Lahendatud:** `security-private.php` kustutatud, Grav kirjutas uue soola
+(sessioonid logiti välja). Vana väärtus jääb git-ajalukku, aga ei ole enam
+kasutuses. `api-private.php` JWT-saladus oli algusest peale värskelt
+genereeritud.
+
+### 8.2 Uued ignore-reeglid
+
+Grav 2.0 kirjutab saladusi kohtadesse, mida repo varem jälgis:
+
+- `/user/config/security-private.php` — CSRF-sool
+- `/user/config/plugins/*-private.php` — nt `api-private.php` JWT-võti
+- `/user/config/plugins/api.yaml` — `popularity.salt`, külastaja-IP-de
+  pseudonüümimise HMAC-võti. Plugina enda kood ütleb: *"a committed salt would
+  be globally known and defeat the keyed-hash protection entirely."* Kui siia
+  tekib kunagi päris api-seadistusi, tuleb sool eraldi failiks tõsta.
+- `/.migration-complete` — wizardi lõpumarker, viitab `backup/`-i zip-ile
+
+### 8.3 Muud selle commit'i muudatused
+
+- **`.htaccess`** — wizard tõstis `mod_expires` ploki faili algusesse ja tõi
+  2.0 karmimad turvareeglid: kõik `[F]` → `[F,NC]` (tõstutundetu),
+  `user/config`, `user/env`, `user/accounts` ja `user/data` blokeeritud
+  failitüübist sõltumata (avatarid ja meediafailid lubatud eranditega, SVG
+  blokitud stored-XSS-i tõttu). `user/pages` reegel on **kommenteeritud** —
+  selle sisselülitamine ilma `pages.media_route_urls: true`-ta muudaks iga
+  meedia-URL-i 403-ks.
+- **`Dockerfile`** — `a2enmod rewrite` → `a2enmod rewrite expires`. `.htaccess`
+  `ExpiresByType` plokk oli failis juba varem olemas, aga moodul puudus, seega
+  vahemälupäiseid ei saadetudki.
+- **`system.yaml`** — `twig.undefined_functions` / `undefined_filters`
+  eemaldatud (2.0-s pole enam), `gpm.releases: testing` → **`stable`** (§7
+  märkus: 2.0.x on stabiilses kanalis olemas).
+- **`kirikiri/blueprints.yaml`** — lisatud `compatibility.grav: ['1.7', '1.8',
+  '2.0']`. Teema testiti enne migreerimist eraldi liivakastis 2.0.27 ja 2.1.4
+  vastu: kõik lehed 200, null PHP-hoiatust, `<body>` väljund identne peale
+  Gravi enda pildimõõtude parandust.
+
+### 8.4 Verifitseeritud pärast migreerimist
+
+- `https://kirikiri.eu/` → 302 → `/et` → **200** (läbi Cloudflare Tunneli)
+- Live-väljund vastab liivakasti ennustusele (erinevad ainult pildivahemälu
+  hashid ja siltide järjekord)
+- `logs/grav.log`-is pole uusi PHP-vigu ega CRITICAL-kirjeid
+
+### 8.5 Lahtised otsad
+
+- **Failide omand (§8.1)** — parandus: jälgitavad failid `meelis:www-data`,
+  failid `664`, kaustad `2775`. See annab kirjutusõiguse nii Meelisele kui
+  Gravi adminile (`user/config/*.yaml` ja `user/pages/**` peavad jääma
+  www-data'le kirjutatavaks). Nõuab `sudo`.
+- **Üleslaadimise piir on 2 MiB** ja see lõi admin2-s välja juba esimesel
+  katsel (`logs/grav.log` 14.09 20:55, neli korda `422 File exceeds maximum
+  upload size`). Piirang on kolmes kohas: PHP `upload_max_filesize=2M`,
+  `post_max_size=8M` ja Grav `system.yaml: upload_limit: 2097152`. Ei ole
+  migreerimise tekitatud, aga telefoni- või skanneripilt on tavaliselt 3–8 MB,
+  seega praktikas ei saa artiklile pilti lisada. Parandus nõuab `php.ini`
+  ülekirjutust `Dockerfile`-is **ja** `upload_limit`-i tõstmist.
+- **`user/config/plugins/admin.yaml`** on orb — `admin` plugin asendus
+  `admin2`-ga, mis seda faili ei loe. Sees on ainult `add_modals` ("Lisa
+  artikkel" nupp, blueprint `user/blueprints/admin/pages/new_post.yaml`). Kui
+  nupp on admin2-s kadunud, tuleb sama asi admin2 keeles uuesti seadistada.
+- **`user/config/plugins/migrate-grav.yaml`** (`enabled: false`) jäi maha
+  pärast plugina eemaldamist — jälgimata, võib kustutada.
+- **`user/pages/02.blog/test/`** — migreerimise testartikkel
+  (`published: false`) koos pildiga. Jälgimata: kustuta või avalda.
+- **`markdown-notices` 1.2.0** (§7) — 2.0 juures kaaluda asendamist
+  `github-markdown-alerts`-iga. Endiselt tegemata.
