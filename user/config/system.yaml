@@ -14,7 +14,8 @@ http_x_forwarded:
   protocol: true
   host: false
   port: true
-  ip: true
+  ip: false
+  cf_connecting_ip: true
 languages:
   supported:
     - et
