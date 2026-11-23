@@ -6,8 +6,8 @@ See dokument võtab kokku Kirikiri veebilehe migreerimise Astro-st Grav CMS-i, k
 Kirikiri on viidud üle failipõhisele Grav CMS-ile, et lihtsustada sisuhaldust läbi Admin paneeli, säilitades samal ajal kiiruse ja paindlikkuse.
 
 ## 2. Tehniline Arhitektuur
-- **CMS**: Grav v1.7.x
-- **PHP Versioon**: 8.3 (Vajalik Admin plugina stabiilsuseks)
+- **CMS**: Grav 2.2.x (migreeritud 1.8-lt 14.09.2026)
+- **PHP Versioon**: 8.3
 - **Server**: Apache (Dockeris `php:8.3-apache`)
 - **Vajalikud PHP moodulid**: `gd`, `zip`, `intl`, `opcache`
 - **Ruutimine**: Apache `mod_rewrite` peab olema sisse lülitatud ja `.htaccess` fail peab asuma juurkataloogis.
@@ -25,51 +25,53 @@ Teema on ehitatud nullist, järgides minimalistlikku ja "editorial" stiili.
 - **Pildiallkirjad**: Kasutame JS skripti `base.html.twig`-is, mis muundab md `![Alt](src "Title")` pildid `<figure>` elementideks. 
 - **Joonealused märkused**: CSS-põhine lahendus (`hr + .footnotes { border: none }`), mis peidab topeltjooned ja tagab visuaalse korrektsuse.
 - **Lokaliseerimine**: Kuupäevade tõlkimine ("22. detsember 2025") on lahendatud Twig-i massiiviga templiidi sees, et vältida serveri lokaadi sõltuvust.
-- **Info leht**: Kasutab nüüd sama `item.html.twig` stiilis päist (`.article-hero`), et tagada visuaalne terviklikkus.
+- **Info leht**: Mall `page` (päises `template: page`), sama `.article-hero` stiilis päis.
 
 ### 3.2 Olulised Templiidid
 - `base.html.twig`: Üldine HTML struktuur, menüüd ja jalus.
 - `home.html.twig` / `blog.html.twig`: Artiklite loendi kuvamine kaardiruudustikuna.
-- `item.html.twig`: Üksiku artikli vaade koos uue päise lahendusega.
-- `default.html.twig`: Tavaline tekstileht info jaoks.
+- `default.html.twig`: **Artikkel** (Grav 2 admin loob uue lehe alati `default` malliga, seepärast on artiklimall just see). Blueprint `blueprints/pages/default.yaml` lisab Featured Image välja ja eeltäidab autori, sildi `uudised` ja kuupäeva.
+- `item.html.twig`: alias (`{% extends 'default.html.twig' %}`) vanadele postitustele, mis on failid `item.et.md`.
+- `page.html.twig`: Lihtleht (nt `/info`).
+- `archives`, `tags`, `authors`, `taxonomy`: koondlehed. **Igal mallil peab olema oma blueprint** `blueprints/pages/`-is (vanem naelutatud süsteemi `default`-ile), muidu pärib see artiklivälju.
+- Mallivaliku sildid (Artikkel, Lihtleht jne) tulevad `kirikiri.php`-st (`onAdminPageTypes`), mitte blueprinti `title:`-ist.
 
 ## 4. Sisuhaldus (`user/pages`)
 Sisu on organiseeritud kaustadesse. Iga kaust on üks leht või artikkel.
 - `01.home`: Esileht.
 - `02.blog`: Artiklite peakaust (sisaldab alamkaustu iga artikli jaoks).
 
-**Artikli sisu näide (`item.md`):**
+**Artikli sisu näide (`default.et.md`, vanadel `item.et.md`):**
 ```yaml
 ---
 title: Pealkiri
-date: '2025-12-27 22:00'
-header:
-    image: pilt.jpg
-    author: Meelis Friedenthal
+date: '27-12-2025 22:00'
+image: pilt.jpg
 taxonomy:
-    tag: [Uudised]
+    tag: [uudised]
+    author: ['Meelis Friedenthal']
 ---
 Markdown sisu siia...
 ```
 
 ## 5. Administreerimine
-- **Admin Paneel**: `/admin`
+- **Admin Paneel**: `/admin` (plugin `admin2`, taustal `api`)
 - **Pluginad**: 
-  - `admin`, `login`, `forms`, `email`: Süsteemsed.
+  - `admin2`, `api`, `flex-objects`, `login`, `form`, `email`: Süsteemsed.
   - `markdown-notices`: Märkuste kuvamiseks.
+  - `taxonomylist`, `sitemap`, `shortcode-core`, `error`, `problems`.
+- **Uue artikli järjehoidja**: `/admin/pages/new?kind=page&template=default&parent=/blog`
 
 ## 6. Korduvad Probleemid ja Lahendused
 - **Muudatused ei paista**: Jookse käsk `bin/grav clearcache`. Brauseris kasuta `Ctrl+F5`.
 - **404 vead lehtedel**: Veendu, et `.htaccess` fail on olemas.
-- **Õiguste viis**: Kui Admin paneel ei saa faile salvestada, jookse:
-  `sudo chown -R www-data:www-data .`
-  `sudo chmod -R 775 cache logs images user`
+- **Adminis puudub mallivalik või Featured Image väli**: aegunud vahemälu, vt eelmist punkti.
+- **Õigused**: vt `.instructions.md` → "Failide õigused".
 
-## 7. Paigaldamine Uude Serverisse
-Detailne juhend on failis `nuc_deployment_guide.md`.
+## 7. Serveri seadistus ja uuendamine
+Vt `.instructions.md`.
 
-## 8. Tulevikuplaanid (Implementeeritud 28.12.2025)
-Kõik järgnevad funktsioonid on nüüd implementeeritud:
+## 8. Funktsioonid (lisatud 28.12.2025)
 
 ### ✅ Esileht vs Artiklid
 Esileht (`home.html.twig`) näitab nüüd:
@@ -135,4 +137,4 @@ Lisatud stiilid:
 - `.article-content img` - Piltide laiuse piiramine
 
 ---
-*Viimati uuendatud: 28. detsember 2025*
+*Viimati uuendatud: 23. november 2026*

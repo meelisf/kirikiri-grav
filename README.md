@@ -7,8 +7,12 @@ Kirikiri veebileht — Grav CMS põhine.
 - `user/themes/kirikiri/` — kohandatud teema
 - `user/pages/` — sisu ja postitused
 - `user/config/` — Grav seadistused
-- `user/blueprints/` — kohandatud blueprintid
-- `Dockerfile`, `docker-compose.yml`, `.htaccess`, `robots.txt` — deploy
+- `Dockerfile`, `.htaccess`, `robots.txt` — deploy
+
+Konteinerit (`kirikiri-production`) EI käivitata siit kaustast: teenus on
+kirjas ülemkausta `~/koduserver/docker-compose.yml`-is (`docker compose up -d kirikiri`).
+Port on seotud ainult `127.0.0.1:8080`-ga; avalik liiklus tuleb Cloudflare Tunneli
+kaudu Dockeri võrgus (`http://kirikiri-production:8080`).
 
 ## Mis EI ole repos
 
@@ -23,6 +27,6 @@ bin/grav install
 
 ## Deploy & haldus
 
-Vaata `.instructions.md`, `PROJEKTI_DOKUMENTATSIOON.md` ja `docs/`.
-Eriti `docs/2026-06-20-repo-umberkorraldus.md` (repo ümberkorralduse ja
-turvauuenduste ülevaade).
+- `.instructions.md` — serveri seadistus, uuendamine, õigused
+- `PROJEKTI_DOKUMENTATSIOON.md` — teema, mallid, sisuhaldus
+- `docs/2026-08-23-grav2-otsus-ja-pluginauuendused.md` — Grav 2 migreerimise ajalugu

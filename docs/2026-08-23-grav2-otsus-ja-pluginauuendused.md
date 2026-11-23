@@ -4,8 +4,7 @@
 **Staatus:** pluginad uuendatud ✅ · migreerimine 2.0-le **TEHTUD 14.09.2026** —
 vt §8. §3–§6 on alles otsuse ajalooks, aga §3 ("miks täna ei migreerunud") ja
 §4 (käivitustingimus) on nüüdseks möödas.
-**Asendab:** `2026-06-20-repo-umberkorraldus.md` §4.1 ja §4.7 (need on aegunud —
-seal seisab "ootame 2.0 GA-d", GA on nüüdseks ammu käes)
+**Asendab:** varasemat `2026-06-20-repo-umberkorraldus.md`-i (kustutatud 23.11.2026, vt git ajalugu)
 
 ---
 
